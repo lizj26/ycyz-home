@@ -177,6 +177,32 @@ button{font:inherit;color:inherit}
 }
 .btn-ghost:hover{background:rgba(247,234,210,.16);border-color:var(--gold-hi);transform:translateY(-2px)}
 
+/* ---------------- 首屏 3D 层（零素材，可整体关掉） ----------------
+   默认不显示：只有脚本真的把 WebGL 挂起来之后才淡入。
+   这样即便 three.js 没加载 / 设备不支持，首屏也还是原来那套 CSS 视觉，
+   不会出现一块空白，也不会因为 opacity:0 的层挡住按钮（pointer-events:none）。 */
+.hero-3d{
+  position:absolute;z-index:0;pointer-events:none;
+  left:auto;right:-2%;top:-12%;bottom:-14%;width:min(760px,54vw);
+  opacity:0;transition:opacity .6s var(--ease);
+  /* 只在最外圈淡出：柱阵本身要完整，遮太狠会把环的边缘啃掉 */
+  mask-image:radial-gradient(closest-side,#000 84%,transparent 100%);
+  -webkit-mask-image:radial-gradient(closest-side,#000 84%,transparent 100%);
+}
+.hero-3d canvas{display:block;width:100%;height:100%}
+body.has3d .hero-3d{opacity:.96}
+/* 3D 上来之后，原来那两道 CSS 金弧退成淡淡的底，别和柱阵抢 */
+.hero::before,.hero::after{transition:opacity .6s var(--ease)}
+body.has3d .hero::before{opacity:.42}
+body.has3d .hero::after{opacity:.55}
+/* 窄屏不启用：柱阵会糊在标题后面，可读性不划算，低端机也省 GPU */
+@media (max-width:1099px){ .hero-3d{display:none} }
+/* 1100—1399：标题还占得挺宽，柱阵收小并往右推，只在中缝露一点，别压字 */
+@media (min-width:1100px) and (max-width:1399px){
+  .hero-3d{width:min(520px,44vw);right:2%;top:-24%;bottom:-26%}
+  body.has3d .hero-3d{opacity:.9}
+}
+
 /* ============================ 主体 ============================ */
 main.portal{max-width:1120px;margin:0 auto;width:100%;padding:clamp(30px,5vw,58px) clamp(14px,3vw,32px) 0}
 

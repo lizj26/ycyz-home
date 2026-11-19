@@ -29,6 +29,8 @@
 </header>
 
 <section class="hero">
+  <!-- 首屏 3D：零素材，纯程序化。默认透明，脚本挂成功才淡入；关掉它页面一切照旧 -->
+  <div class="hero-3d" id="hero3d-wrap" aria-hidden="true"><canvas id="hero3d"></canvas></div>
   <div class="hero-inner">
     <div class="hero-strip"><span></span>1906 — 2026 · 百廿荣光</div>
     <h1>宁夏银川一中<em>之家</em></h1>
@@ -255,6 +257,50 @@
       e.preventDefault();
       t.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"});
     });
+  });
+})();
+</script>
+
+<script>
+/* ---------- 首屏 3D 按需加载 ----------
+   原则：先让页面能看、能用，3D 永远最后来；条件不满足就一个字节都不下载。
+   下面这段判断必须在任何 load() 之前 —— 一旦脚本发出去就收不回来了。 */
+(function(){
+  var canvas = document.getElementById('hero3d');
+  if (!canvas) return;
+  var force = /[?&]force3d=1/.test(location.search);   /* 调试用：绕过全部判断 */
+
+  if (!force){
+    if (window.innerWidth < 1100) return;              /* 窄屏（CSS 里也已隐藏） */
+    var c = navigator.connection || {};
+    if (c.saveData || /(^|-)2g$/.test(c.effectiveType || '')) return;
+    if (navigator.deviceMemory && navigator.deviceMemory <= 2) return;
+    try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) {}
+  }
+
+  function load(src, ok, fail){
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.onload = ok;
+    s.onerror = fail;
+    document.head.appendChild(s);
+  }
+
+  function boot(){
+    var api = false;
+    try { api = window.YCYEZ_HERO && window.YCYEZ_HERO.mount(canvas); } catch (e) { api = false; }
+    /* 挂不起来就什么都不加：.hero-3d 保持 opacity:0，原有 CSS 视觉原样生效 */
+    if (api) document.body.classList.add('has3d');
+  }
+
+  var idle = window.requestIdleCallback || function(f){ return setTimeout(f, 200); };
+  idle(function(){
+    /* three.min.js 用的是 memory/ 里那一份（全站共用，不另存副本）。
+       拿不到就静默放弃，不影响任何一个入口。 */
+    load('memory/assets/three.min.js',
+      function(){ load('assets/hero3d.js', boot, function(){}); },
+      function(){});
   });
 })();
 </script>

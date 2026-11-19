@@ -7,14 +7,17 @@
  *   · 漂浮金尘（Points + 加法混合）
  *   · 指针视差：鼠标/手指移动时整体轻微偏转
  *
- * 用法：
- *   <canvas id="hero3d"></canvas>
- *   <script src="three.min.js"></script>
- *   <script src="hero3d.js"></script>
+ * 用法（首屏已经接好，一般不用动这个文件）：
+ *   <div class="hero-3d"><canvas id="hero3d"></canvas></div>
+ *   <script src="memory/assets/three.min.js"></script>   ← 与毕业留念共用同一份
+ *   <script src="assets/hero3d.js"></script>
  *   YCYEZ_HERO.mount(document.getElementById('hero3d'))
  *
- * 降级：没有 WebGL、或用户开启「减少动态效果」时，只渲染一帧静帧；
- *       WebGL 不可用则返回 false，调用方保持原有 CSS 视觉即可。
+ * 注意：three.min.js 是 memory/ 提供的那一份，全站共用，不要另存副本。
+ *       门户只把它当"增强"——拿不到就保持 CSS 视觉，功能一个不少。
+ *
+ * 降级：没有 WebGL 返回 false，调用方保持原有 CSS 视觉；
+ *       用户要求减少动效时只渲染一帧静帧（由调用方决定要不要加载）。
  * ============================================================ */
 (function(){
   var GOLD   = 0xc9973f;
@@ -73,8 +76,8 @@
       transparent: true, opacity: 0.75
     });
     var matRed = new THREE.MeshStandardMaterial({
-      color: RED, metalness: 0.45, roughness: 0.45, envMapIntensity: 0.9,
-      emissive: 0x66100a, emissiveIntensity: 0.55
+      color: 0xd23a24, metalness: 0.25, roughness: 0.33, envMapIntensity: 1.1,
+      emissive: 0xb02f1c, emissiveIntensity: 1.15
     });
 
     var root = new THREE.Group();
@@ -141,10 +144,35 @@
       rings.push(m);
     });
 
-    /* ---------- 中央红盘（与站点主色呼应，作为视觉锚点） ---------- */
-    var disc = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.23, 0.014, 64), matRed);
-    disc.position.y = -0.145;
+    /* ---------- 中央红盘：当"印章"用，不是当洞用 ----------
+       深红圆盘 + 一圈金边，读起来是校徽式的印记；纯暗盘会像画面被挖空。 */
+    var disc = new THREE.Mesh(new THREE.CylinderGeometry(0.175, 0.175, 0.022, 64), matRed);
+    disc.position.y = -0.142;
     root.add(disc);
+
+    var sealRing = new THREE.Mesh(new THREE.TorusGeometry(0.185, 0.0050, 8, 96), matGold);
+    sealRing.rotation.x = Math.PI / 2;
+    sealRing.position.y = -0.128;
+    root.add(sealRing);
+
+    /* 印章底下的暖光，让红盘"发亮"而不是"发暗" */
+    (function(){
+      var S = 128, c = document.createElement('canvas');
+      c.width = c.height = S;
+      var g = c.getContext('2d');
+      var grd = g.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
+      grd.addColorStop(0,   'rgba(255,208,140,.30)');
+      grd.addColorStop(0.5, 'rgba(240,150,80,.12)');
+      grd.addColorStop(1,   'rgba(200,80,40,0)');
+      g.fillStyle = grd; g.fillRect(0, 0, S, S);
+      var tex = new THREE.CanvasTexture(c);
+      if ('colorSpace' in tex && THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+      var halo = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 1.05),
+        new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      halo.rotation.x = -Math.PI / 2;
+      halo.position.y = -0.128;
+      root.add(halo);
+    })();
 
     /* ---------- 金尘 ---------- */
     var DUST = window.innerWidth < 700 ? 260 : 520;
