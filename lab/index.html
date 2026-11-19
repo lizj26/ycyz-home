@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#a9291c">
+<meta name="robots" content="noindex, nofollow">
+<title>首屏 3D 实验 · 宁夏银川一中之家</title>
+<link rel="stylesheet" href="../assets/portal.css">
+<style>
+  /* ---------- 实验页专用 ---------- */
+  .lab-bar{
+    position:sticky;top:0;z-index:20;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:10px clamp(14px,3vw,32px);
+    background:rgba(43,35,32,.94);color:#f7ead2;
+    font-size:12px;letter-spacing:.04em;
+    backdrop-filter:blur(8px);
+  }
+  .lab-bar b{font-weight:600;color:#f2d992}
+  .lab-bar .sp{flex:1 1 auto}
+  .lab-bar a{color:#f2d992;text-decoration:none;border-bottom:1px solid rgba(242,217,146,.4)}
+  .lab-bar button{
+    font:inherit;cursor:pointer;padding:5px 14px;border-radius:999px;
+    border:1px solid rgba(242,217,146,.5);background:transparent;color:#f7ead2;
+    transition:background .15s,color .15s;
+  }
+  .lab-bar button:hover{background:rgba(242,217,146,.16)}
+  .lab-bar button[aria-pressed="true"]{background:#f2d992;color:#5c1a10;font-weight:600}
+  .lab-bar .stat{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#c9b89a}
+
+  /* 3D 画布：贴在首屏右侧（和原有 CSS 金弧同区域），窄屏退到文字后方 */
+  .hero-3d{
+    position:absolute;inset:0;z-index:0;pointer-events:none;
+    opacity:.95;transition:opacity .35s ease;
+  }
+  .hero-3d canvas{display:block;width:100%;height:100%}
+  body.no3d .hero-3d{opacity:0}
+  body.no3d .hero::before,body.no3d .hero::after{opacity:1}
+  .hero::before,.hero::after{transition:opacity .35s ease}
+  body:not(.no3d) .hero::before{opacity:.45}
+
+  /* 窄屏直接不启用 3D：标题会压在柱阵上，可读性不划算，低端机也省 GPU */
+  @media (max-width:899px){
+    .hero-3d{display:none}
+  }
+  /* 让 3D 偏右，别糊在标题上 */
+  @media (min-width:900px){
+    .hero-3d{
+      left:auto;right:-1%;top:-8%;bottom:-10%;width:min(720px,52vw);
+      mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);
+      -webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);
+    }
+  }
+
+  /* ---------- 说明区 ---------- */
+  .lab-main{max-width:1000px;margin:0 auto;width:100%;padding:clamp(28px,4.6vw,50px) clamp(14px,3vw,32px) 0}
+  .lab-main h2{
+    font-size:clamp(19px,2.5vw,23px);letter-spacing:.1em;color:var(--red-deep);
+    margin:0 0 6px;
+  }
+  .lab-main .lead{font-size:13.5px;color:var(--ink-soft);margin:0 0 22px;line-height:1.85}
+  .cmp-wrap{width:100%;overflow-x:auto;margin:0 0 26px;-webkit-overflow-scrolling:touch}
+  .cmp{
+    width:100%;min-width:560px;border-collapse:collapse;font-size:13px;
+    background:rgba(255,253,248,.62);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  }
+  .cmp th,.cmp td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(120,90,50,.12)}
+  .cmp th{font-size:11.5px;letter-spacing:.1em;color:var(--ink-faint);font-weight:600;background:rgba(246,231,198,.5)}
+  .cmp tr:last-child td{border-bottom:none}
+  .cmp td:first-child{color:var(--ink-soft)}
+  .cmp .good{color:#2f6b3f;font-weight:600}
+  .cmp .bad{color:#a9291c;font-weight:600}
+  .verdicts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin:0 0 28px}
+  .v-card{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:rgba(255,253,248,.62)}
+  .v-card h3{font-size:13.5px;margin:0 0 6px;color:var(--red-deep)}
+  .v-card p{font-size:12.5px;color:var(--ink-soft);line-height:1.75;margin:0}
+  .v-card ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink-soft);line-height:1.8}
+  pre{
+    background:#2b2320;color:#f0e4cf;border-radius:10px;padding:14px 16px;overflow:auto;
+    font-size:12px;line-height:1.7;margin:0 0 26px;
+  }
+  pre .c{color:#9b8a72}
+  .lab-foot{margin:36px 0 0;padding:16px 0 40px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--ink-faint)}
+</style>
+</head>
+<body class="">
+
+<div class="lab-bar">
+  <b>首屏 3D 实验</b>
+  <span>零素材 · 程序化渲染</span>
+  <span class="sp"></span>
+  <span class="stat" id="stat">初始化…</span>
+  <button id="toggle" aria-pressed="true" type="button">3D：开</button>
+  <a href="../">← 回门户</a>
+</div>
+
+<!-- 真实首屏（与门户一致），只是多了一层 3D 画布 -->
+<section class="hero">
+  <div class="hero-3d" id="hero3d-wrap"><canvas id="hero3d"></canvas></div>
+  <div class="hero-inner">
+    <div class="hero-strip"><span></span>1906 — 2026 · 百廿荣光</div>
+    <h1>宁夏银川一中<em>之家</em></h1>
+    <p class="hero-sub">
+      在读的时候找资料，毕业以后找去处。<br>
+      这是一个由学生自己搭起来的地方，<b>没有官方背景</b>，也不打算做成学校官网。
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#why">看看结论
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v13M6 13l6 5 6-5"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="../memory/">2026 届蹭饭图
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<main class="lab-main" id="why">
+  <h2>这张背景里没有一张图片</h2>
+  <p class="lead">
+    120 根金柱、3 圈细环、520 颗金尘、1 块红盘——全部由 Three.js 在运行时生成，
+    <b>素材 0 KB，只多两个 JS</b>。下面这张表是它和你原来的纯 CSS 首屏、以及一张等价渲染图的对比。
+  </p>
+
+  <div class="cmp-wrap"><table class="cmp">
+    <thead>
+      <tr><th>方案</th><th>首屏传输</th><th>可否动画</th><th>任意分辨率</th><th>失败时</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>纯 CSS 渐变（现在）</td>
+        <td class="good">0 KB</td>
+        <td class="bad">几乎不行</td>
+        <td class="good">是</td>
+        <td class="good">无风险</td>
+      </tr>
+      <tr>
+        <td>一张渲染图（PNG/WebP）</td>
+        <td class="bad">40–300 KB</td>
+        <td class="bad">不行</td>
+        <td class="bad">放大发虚</td>
+        <td class="good">仍在</td>
+      </tr>
+      <tr>
+        <td><b>Three.js 程序化（本页）</b></td>
+        <td>619 KB JS（可缓存 / 可与入场动画共用）</td>
+        <td class="good">是，可交互</td>
+        <td class="good">是，矢量</td>
+        <td>自动退回 CSS 视觉</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h2 style="font-size:16px;margin-bottom:12px">哪些图能这样换，哪些不能</h2>
+  <div class="verdicts">
+    <div class="v-card">
+      <h3>适合程序化渲染</h3>
+      <ul>
+        <li>门户首屏氛围（本页）</li>
+        <li>装饰用的环、光带、粒子、纹样</li>
+        <li>图标（已经在用内联 SVG）</li>
+        <li>节日彩蛋一类的一次性视觉</li>
+      </ul>
+    </div>
+    <div class="v-card">
+      <h3>不值得换</h3>
+      <ul>
+        <li><b>真实影像</b>：校园夜景那张、蹭饭图原图——代码画不出来</li>
+        <li><b>官方标识</b>：120 校徽带校名与年份，重绘必失真</li>
+        <li><b>游戏背景</b>：2D canvas 里再挂一个 WebGL，性能不划算</li>
+        <li>小尺寸位图：压一压就够了（见下方数据）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 style="font-size:16px;margin-bottom:12px">接入方式（如果决定采用）</h2>
+<pre><span class="c">&lt;!-- 1. 首屏里加一层画布，放在内容之下 --&gt;</span>
+&lt;section class="hero"&gt;
+  &lt;div class="hero-3d"&gt;&lt;canvas id="hero3d"&gt;&lt;/canvas&gt;&lt;/div&gt;
+  &lt;div class="hero-inner"&gt;…&lt;/div&gt;
+&lt;/section&gt;
+
+<span class="c">// 2. 空闲时再加载 three.js（不在 &lt;head&gt; 里写死），加载完再挂载</span>
+requestIdleCallback(function(){
+  load('assets/three.min.js', function(){
+    load('assets/hero3d.js', function(){
+      YCYEZ_HERO.mount(document.getElementById('hero3d'));   <span class="c">// 不支持 WebGL / 减少动效时返回 false</span>
+    });
+  });
+});</pre>
+
+  <p class="lab-foot">
+    这个页面是实验稿，没有挂到站点导航里，确认方向后我再把它并进真实首屏（或直接删掉）。
+    本页所有几何体与材质都在 <code>lab/hero3d.js</code> 里，没有引用任何图片。
+  </p>
+</main>
+
+<script>
+(function(){
+  var canvas = document.getElementById('hero3d');
+  var stat   = document.getElementById('stat');
+  var btn    = document.getElementById('toggle');
+
+  /* 窄屏 / 省流量 / 减少动效 / 无 WebGL —— 一律不下载 three.js（619KB）。
+     这一段就是"按需"的全部：不满足条件时，一个字节的 3D 代码都不会发出。 */
+  function giveUp(msg, hideBtn){
+    document.body.classList.add('no3d');
+    stat.textContent = msg;
+    if (hideBtn) btn.hidden = true; else btn.disabled = true;
+  }
+  var conn = navigator.connection || {};
+  var force = location.search.indexOf('force3d') >= 0;   /* 调试用：?force3d=1 跳过下面所有判断 */
+  if (force) { /* 强制预览 */ }
+  else if (window.innerWidth < 900)        return giveUp('窄屏不启用 3D，省流量', true);
+  else if (conn.saveData)                  return giveUp('省流量模式，已跳过 3D', true);
+  else if (!window.WebGLRenderingContext)  return giveUp('设备不支持 WebGL，用 CSS 视觉', true);
+  else try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return giveUp('系统要求减少动效，用 CSS 视觉', true); } catch (e) {}
+
+  /* 先画页面、再加载 3D：等首屏内容出来后才开始拉脚本，不挡标题和按钮 */
+  function load(src, ok, fail){
+    var s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = fail;
+    document.body.appendChild(s);
+  }
+  function fail(){ giveUp('3D 资源加载失败，已退回 CSS 视觉', true); }
+
+  (window.requestIdleCallback || function(f){ setTimeout(f, 200); })(function(){
+    load('../memory/assets/three.min.js', function(){
+      load('hero3d.js', boot, fail);
+    }, fail);
+  });
+
+  function boot(){
+    var api = null;
+    try { api = YCYEZ_HERO.mount(canvas); } catch (e) { api = false; }
+    if (!api) return giveUp('WebGL 初始化失败，已退回 CSS 视觉', true);
+
+    var i0 = api.info();
+    stat.textContent = i0.calls + ' draw calls · ' + i0.triangles.toLocaleString('en-US') + ' 三角面';
+
+    /* FPS：每秒统计一次 */
+    var frames = 0, last = performance.now();
+    (function loop(now){
+      frames++;
+      if (now - last >= 1000){
+        var info = api.info();
+        stat.textContent = Math.round(frames * 1000 / (now - last)) + ' fps · ' +
+                           info.calls + ' draw calls · ' +
+                           info.triangles.toLocaleString('en-US') + ' 三角面';
+        frames = 0; last = now;
+      }
+      requestAnimationFrame(loop);
+    })(performance.now());
+
+    btn.addEventListener('click', function(){
+      var on = document.body.classList.toggle('no3d') === false;
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = '3D：' + (on ? '开' : '关');
+      on ? api.start() : api.stop();
+    });
+  }
+})();
+</script>
+</body>
+</html>

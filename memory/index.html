@@ -363,7 +363,7 @@
 <!-- ═══════════ 入场动画结束 ═══════════ -->
 
 <header>
-  <img class="logo" src="game/xiaoqing.png" alt="宁夏银川一中建校120周年纪念标">
+  <img class="logo" src="game/xiaoqing.png" decoding="async" alt="宁夏银川一中建校120周年纪念标">
   <div class="title-wrap">
     <h1><span class="school">宁夏银川一中 </span><span id="year-label">2026届</span><em>“蹭饭图”</em></h1>
     <div class="stats" id="stats">正在统计各班去向……</div>
@@ -654,6 +654,17 @@
   /* 维护用：加 ?nointro=1 可跳过入场动画直接看版式 */
   if (location.search.indexOf('nointro') >= 0) seen = true;
   var loader = document.getElementById('ycyz-loader');
+
+  /* 省流量 / 减弱动态效果 / 低内存设备：直接看内容。
+     这一段必须在下面 load() 之前判断——否则 three.js(619KB) 和动画脚本(184KB)
+     已经发出去了，再隐藏幕布也省不下流量。 */
+  try {
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) seen = true;
+    var conn = navigator.connection;
+    if (conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ''))) seen = true;
+    if (navigator.deviceMemory && navigator.deviceMemory <= 2) seen = true;
+  } catch (e) {}
+
 
   if (seen) { if (loader) loader.remove(); return; }
   try { sessionStorage.setItem(KEY, '1'); } catch (e) {}

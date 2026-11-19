@@ -6,3 +6,4 @@ User-agent: *
 Allow: /
 Disallow: /memory/
 Disallow: /forum/
+Disallow: /lab/          # 首屏 3D 实验页，不对外收录

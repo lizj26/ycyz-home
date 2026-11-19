@@ -95,10 +95,21 @@ const logo=new Image();
 logo.src='xiaoqing.png';
 const avatar=new Image();
 avatar.src='banhui.png';
+
+/* 两张背景图（书雕 / 校园夜色）共约 155KB。不在解析期就要，等首帧和菜单出来
+   再加载：drawBackGround() 在图片没加载完时直接返回，图到了会自己淡入，
+   所以先看到的是天空和远山，随后景物浮现——比原来白等 1MB 更顺。 */
 const featureDay=new Image();
-featureDay.src='feature_day_shudiao.png';
 const featureNight=new Image();
-featureNight.src='feature_night.png';
+function loadFeatureArt(){
+  if(featureDay.src) return;
+  featureDay.src='feature_day.webp';
+  featureNight.src='feature_night.webp';
+}
+addEventListener('load', function(){
+  if('requestIdleCallback' in window) requestIdleCallback(loadFeatureArt,{timeout:2000});
+  else setTimeout(loadFeatureArt, 400);
+});
 //玩家头像球
 function ballImage(){
   if(avatar.complete && avatar.naturalWidth>0) return avatar;
