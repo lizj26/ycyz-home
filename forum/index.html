@@ -34,8 +34,7 @@
     <div class="crumb"><a href="../">首页</a><span>/</span>文字论坛</div>
     <h1>文字论坛 <span class="chip chip-soon">筹备中</span></h1>
     <p>
-      全站<b>唯一需要后端</b>的部分。程序已经写完了，跑起来只差一台机器和一点运维耐心。
-      上线之前，这个页面用来交代它会是什么样子。
+      全站只有这一块要后端。程序写完了，还差一台机器。上线之前先把样子说清楚。
     </p>
   </div>
 </section>
@@ -47,8 +46,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.6v.6"/></svg>
     </span>
     <p>
-      <b>现在点不进去，是因为它还没部署</b>，不是因为坏了。静态页面托管不花钱，
-      论坛要一台常年开着的服务器，这部分还在等条件。
+      <b>现在点不进去，是还没部署</b>，不是坏了。静态页不要钱，论坛得有个一直开着的服务器。
     </p>
   </div>
 
@@ -60,19 +58,19 @@
     <div class="feat">
       <div class="feat-item">
         <b>纯文字，不存图片</b>
-        <span>没有附件、没有头像、没有富文本。省掉存储和审核的大半麻烦，也少了一堆内容风险。</span>
+        <span>没有附件、头像、富文本。不用存文件，也少一堆麻烦。</span>
       </div>
       <div class="feat-item">
         <b>邀请码注册</b>
-        <span>一码一人，由管理员发放。挡掉爬虫和外面的人，比答题验证有效。</span>
+        <span>一码一人，管理员发。爬虫和外面的人进不来。</span>
       </div>
       <div class="feat-item">
         <b>新号前 3 条需审核</b>
-        <span>通过后自动免审。既拦住乱发，又不会让老用户一直等。</span>
+        <span>过了前三条就不再审，老用户不用一直等。</span>
       </div>
       <div class="feat-item">
         <b>有举报、有封禁</b>
-        <span>谁都能举报，管理员处理留痕。内容只有三种状态：待审、正常、隐藏。</span>
+        <span>谁都能举报，处理有记录。帖子只有三种状态：待审、正常、隐藏。</span>
       </div>
     </div>
   </section>
@@ -85,7 +83,7 @@
     <ol class="board-list">
       <li><span class="n">01</span><b>综合</b><p>什么都聊。先从自我介绍开始。</p></li>
       <li><span class="n">02</span><b>选课与教务</b><p>选课、绩点、考试、培养方案。大一最需要的一个版。</p></li>
-      <li><span class="n">03</span><b>二手与拼单</b><p>教材、电脑、拼车、拼单。交易请留联系方式，注意安全。</p></li>
+      <li><span class="n">03</span><b>二手与拼单</b><p>教材、电脑、拼车、拼单。留个联系方式，别被骗。</p></li>
       <li><span class="n">04</span><b>失物招领</b><p>丢了捡了都发这里，比群里刷屏强。</p></li>
       <li><span class="n">05</span><b>技术与资源</b><p>工具、脚本、教程，以及给资料站投稿。</p></li>
     </ol>
@@ -94,22 +92,21 @@
   <section class="howto">
     <h2>为什么拖到现在还没上线</h2>
     <ol>
-      <li><b>要一台机器。</b>静态站能白嫖 GitHub Pages，论坛不行，它得有个常驻进程和一个数据库文件。</li>
-      <li><b>要有人值守。</b>审核、发码、处理举报，都是人的活。没人管的话论坛会烂得很快。</li>
-      <li><b>要想清楚边界。</b>校内实名讨论和匿名吐槽是两回事，先定规则再开版，比开了再补规矩容易。</li>
+      <li><b>差一台机器。</b>静态站能白嫖 GitHub Pages，论坛不行，得有常驻进程和一个数据库文件。</li>
+      <li><b>得有人看着。</b>审核、发码、处理举报都是人的活，没人管很快就乱。</li>
+      <li><b>规则要先定。</b>实名讨论和匿名吐槽是两回事，开版之前说清楚，比开了再补容易。</li>
     </ol>
     <p style="margin-top:14px;font-size:12.5px;color:var(--ink-faint);line-height:1.8">
-      条件具备之后，维护者只需在 <code>assets/site.config.js</code> 里填一个地址，
-      全站所有论坛入口会同时变成可点的外链，不需要改页面。
+      服务器有了以后，在 <code>assets/site.config.js</code> 里填个地址，全站的论坛入口一起变成外链，页面不用动。
     </p>
   </section>
 
   <section class="howto">
     <h2>论坛还没开，可以先看这些</h2>
     <ol>
-      <li><a href="../memory/" style="color:var(--red-deep);border-bottom:1px solid rgba(169,41,28,.3)">毕业留念</a>——看看上一届的人去了哪。</li>
-      <li><a href="../university/" style="color:var(--red-deep);border-bottom:1px solid rgba(169,41,28,.3)">大学开源资料站</a>——选课、文献、工具的入口。</li>
-      <li><a href="../highschool/" style="color:var(--red-deep);border-bottom:1px solid rgba(169,41,28,.3)">高中开源资料站</a>——还空着，等第一个投稿的人。</li>
+      <li><a href="../memory/" style="color:var(--red-deep);border-bottom:1px solid rgba(169,41,28,.3)">毕业留念</a>，看看上一届的人去了哪。</li>
+      <li><a href="../university/" style="color:var(--red-deep);border-bottom:1px solid rgba(169,41,28,.3)">大学开源资料站</a>，选课、文献、工具的入口在这。</li>
+      <li><a href="../highschool/" style="color:var(--red-deep);border-bottom:1px solid rgba(169,41,28,.3)">高中开源资料站</a>，还空着，等第一个投稿的人。</li>
     </ol>
   </section>
 
@@ -131,7 +128,7 @@
       <a href="./">论坛</a>
     </div>
     <p class="foot-note">
-      非官方站点，由一中学生与校友自发搭建和维护，不代表学校立场。
+      非官方站点，一中的学生和校友自己维护，不代表学校。
     </p>
   </div>
 </footer>
