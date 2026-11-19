@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#a9291c">
+<meta name="robots" content="noindex">
+<title>页面不在这里 · 宁夏银川一中之家</title>
+<!-- 404 页在 GitHub Pages 上会被任意深度的错误路径触发，所以这里不引外部 CSS，
+     样式全部内联；站内链接由脚本按站点根前缀还原（见页尾）。 -->
+<style>
+  :root{
+    --red:#a9291c; --red-deep:#8a1f14; --gold:#c9973f; --gold-soft:#f6e7c6;
+    --ink:#2b2320; --ink-soft:#5f544c; --line:rgba(120,90,50,.18);
+    --bg:#faf4e8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Source Han Sans SC","Noto Sans SC",sans-serif;
+    color:var(--ink); background:var(--bg);
+    background-image:linear-gradient(180deg,#faf4e8 0%,#f5ecd9 60%,#f2e6cf 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:36px 22px; line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mark{width:76px;height:76px;border-radius:50%;display:block;margin-bottom:18px;
+        box-shadow:0 6px 22px rgba(120,60,20,.18)}
+  .code{
+    font-family:"KaiTi",Georgia,serif; font-size:13px; letter-spacing:.32em;
+    color:var(--gold); text-transform:uppercase; margin-bottom:6px;
+  }
+  h1{
+    font-family:"Songti SC","Source Han Serif SC",Georgia,serif;
+    font-size:clamp(24px,4.4vw,34px); letter-spacing:.06em; font-weight:600;
+    color:var(--red-deep); margin:0 0 12px;
+  }
+  p{margin:0 0 8px; font-size:13.5px; color:var(--ink-soft); max-width:34em}
+  .rule{
+    width:64px;height:2px;margin:22px 0;border-radius:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+  .acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:9px 20px;border-radius:999px;text-decoration:none;font-size:13px;
+    border:1px solid var(--line);color:var(--ink-soft);background:rgba(255,253,248,.7);
+    transition:background .16s,border-color .16s,color .16s;
+  }
+  .btn:hover{border-color:var(--gold);color:var(--red-deep);background:var(--gold-soft)}
+  .btn-primary{background:var(--red);border-color:var(--red-deep);color:#f7ead2;font-weight:600}
+  .btn-primary:hover{background:var(--red-deep);color:#fff4dc}
+  footer{
+    margin-top:34px;font-size:11px;color:rgba(120,90,50,.55);letter-spacing:.06em;
+  }
+  @media (prefers-reduced-motion:no-preference){
+    body{animation:fade .5s ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+<img class="mark" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23a9291c'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23f2d992' stroke-width='1.2'/%3E%3Ctext x='32' y='41' font-family='Georgia,serif' font-size='22' fill='%23f2d992' text-anchor='middle'%3E404%3C/text%3E%3C/svg%3E" alt="">
+
+<div class="code">Error 404</div>
+<h1>这一页不在这里</h1>
+<p>可能是链接写错了，也可能是这一页已经搬走。</p>
+<p>下面的入口都能用，从首页重新找一次通常更快。</p>
+
+<div class="rule"></div>
+
+<div class="acts">
+  <a class="btn btn-primary" href="./" data-root="">回首页</a>
+  <a class="btn" href="memory/" data-root="memory/">毕业留念</a>
+  <a class="btn" href="highschool/" data-root="highschool/">高中资料</a>
+  <a class="btn" href="university/" data-root="university/">大学资料</a>
+  <a class="btn" href="forum/" data-root="forum/">论坛</a>
+</div>
+
+<footer>宁夏银川一中之家 · 1906 — 2026 · 非官方站点</footer>
+
+<script>
+/* 404 页会被任意深度的错误路径命中（如 /ycyz-home/a/b/c），
+ * 相对链接会相对于那个错误的目录解析，所以统一按站点根前缀重算。
+ * GitHub Pages 项目站的根是 /<仓库名>/，自定义域名或根域名部署时是 /。
+ * 仓库改名后，把下面的 REPO 一起改掉。 */
+(function(){
+  var REPO = 'ycyz-home';
+  var seg = location.pathname.split('/').filter(Boolean);
+  var base = (seg[0] === REPO) ? '/' + REPO + '/' : '/';
+  var list = document.querySelectorAll('[data-root]');
+  for (var i = 0; i < list.length; i++){
+    list[i].setAttribute('href', base + list[i].getAttribute('data-root'));
+  }
+})();
+</script>
+</body>
+</html>

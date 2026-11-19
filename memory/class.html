@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#a9291c">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="game/xiaoqing.png">
+<title>蹭饭图 · 宁夏银川一中 · 百廿校庆</title>
+<style>
+  :root{
+    /* 百廿校庆主题：绛红 + 鎏金（与 index.html 一致） */
+    --bg:#faf4e8; --panel:#fffdf8; --ink:#4a2c22; --ink-soft:#8a6f5c;
+    --red:#a9291c; --red-deep:#8a1f14; --red-soft:#f7e8dd;
+    --gold:#c9973f; --gold-hi:#e8c97a; --gold-soft:#f6ecd4; --line:#e9d9bd;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  button,a,.stu,.campus-links a{bottom:auto;touch-action:manipulation}
+  a:focus-visible,button:focus-visible,.stu:focus-visible,h3[role="button"]:focus-visible{
+    outline:2px solid var(--gold);outline-offset:2px;
+  }
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    background:linear-gradient(180deg,#faf4e8,#f5ecd9);color:var(--ink);display:flex;flex-direction:column;
+    height:100vh;overflow:hidden;
+    -webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;
+  }
+  @supports (height:100dvh){ body{height:100dvh} }
+
+  /* ---------- 顶栏（与 index.html 一致的校庆绛红主题） ---------- */
+  header{
+    flex:0 0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:10px 18px;background:linear-gradient(180deg,#b33224,#8a1f14);
+    border-bottom:2px solid var(--gold-hi);z-index:30;position:relative;
+    padding-top:calc(10px + env(safe-area-inset-top));
+    box-shadow:0 2px 12px rgba(138,31,20,.28);
+  }
+  .logo{
+    width:48px;height:48px;flex:0 0 auto;border-radius:50%;object-fit:cover;
+    border:2px solid var(--gold-hi);background:#8a1f14;
+    box-shadow:0 2px 8px rgba(60,10,6,.4);
+  }
+  .title-wrap{min-width:0;flex:1 1 auto}
+  h1{
+    font-size:22px;letter-spacing:1px;color:#f7ead2;
+    font-family:"KaiTi","STKaiti","PingFang SC",serif;font-weight:700;
+    text-shadow:0 1px 6px rgba(60,10,6,.45);
+  }
+  h1 em{font-style:normal;color:var(--gold-hi)}
+  .stats{font-size:12px;color:rgba(247,234,210,.85);margin-top:2px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .campus-links{margin-left:auto;display:flex;gap:8px;flex:0 0 auto;align-items:center}
+  .campus-links a,.campus-links .back{
+    text-decoration:none;font-size:13px;padding:6px 12px;border-radius:999px;white-space:nowrap;
+    background:rgba(247,234,210,.14);border:1px solid var(--gold-hi);color:var(--gold-hi);transition:.15s;
+  }
+  .campus-links a:hover{background:rgba(232,201,122,.24);color:#f2d992;border-color:#f2d992;transform:translateY(-1px)}
+  /* 🎵 音乐按钮：红底上的金色芯片（覆盖 bgm.js 的绿色默认样式） */
+  .campus-links #bgm-btn{
+    flex:0 0 auto;background:rgba(247,234,210,.14);border:1px solid var(--gold-hi);color:var(--gold-hi);
+  }
+  .campus-links #bgm-btn:hover{background:rgba(232,201,122,.24);color:#f2d992;border-color:#f2d992}
+  .campus-links #bgm-btn[aria-pressed="false"]{color:rgba(247,234,210,.6);background:rgba(0,0,0,.12)}
+  /* 🎮 小游戏入口（仅 2 班页面显示，金底实心以突出） */
+  .campus-links .game-chip{background:linear-gradient(90deg,var(--gold-hi),#f2d992);
+    border-color:#f2d992;color:var(--red-deep);font-weight:700}
+  .campus-links .game-chip:hover{background:linear-gradient(90deg,#f2d992,#f7e3a8);color:var(--red-deep);border-color:#f7e3a8;transform:translateY(-1px)}
+
+  /* ---------- 主区域 ---------- */
+  /* overflow:hidden —— 收起状态的城市面板用 translateX(102%) 甩到 main 右侧，
+     不裁剪会撑出横向滚动区（实测桌面 347px、手机 398px），整页能被推走 */
+  main{flex:1 1 auto;display:flex;min-height:0;position:relative;overflow:hidden}
+  /* overflow:hidden —— 城市面板收起时靠 translateX(102%) 移到右侧，
+     若不裁剪会滑到旁边的「同学录」名单栏上面把它盖住 */
+  #map-wrap{flex:1 1 auto;position:relative;min-width:0;overflow:hidden}
+  #map{width:100%;height:100%}
+  /* 腾讯地图默认底色偏青绿，和绛红鎏金主题是两套语言：轻微降饱和 + 暖化，
+     力度控制在「红点仍然是红点」的程度，否则数据会跟着一起变浑 */
+  #map canvas{filter:saturate(.7) sepia(.08) contrast(1.02)}
+
+  /* 老师卡片（左上浮层，仿原图） */
+  .teachers{
+    position:absolute;top:14px;left:14px;z-index:1200;width:200px;
+    background:rgba(255,253,248,.95);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;font-size:12px;line-height:1.8;color:var(--ink);
+    box-shadow:0 3px 10px rgba(138,31,20,.10);
+  }
+  .teachers h3{font-size:13px;color:var(--red);margin-bottom:4px;cursor:pointer;user-select:none}
+  .teachers .t-row{display:flex;justify-content:space-between;gap:10px}
+  .teachers .t-role{color:var(--ink-soft)}
+  .teachers.collapsed .t-body{display:none}
+
+  /* 图例（左下浮层，抬高避开腾讯 logo 与比例尺） */
+  .legend{
+    position:absolute;left:14px;bottom:64px;z-index:1200;
+    background:rgba(255,253,248,.95);border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;font-size:12px;color:var(--ink);line-height:2;
+    box-shadow:0 3px 10px rgba(138,31,20,.10);
+  }
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+  .legend .k{background:var(--red)}
+  .legend small{color:var(--ink-soft)}
+
+  .map-fallback{
+    position:absolute;inset:0;z-index:20;display:none;
+    align-items:center;justify-content:center;text-align:center;padding:30px;
+    background:var(--bg);color:var(--ink-soft);font-size:14px;line-height:2;
+  }
+  .map-fallback b{color:var(--red)}
+
+  /* ---------- 侧栏名单（与地图联动） ---------- */
+  aside{
+    flex:0 0 340px;background:var(--bg);border-left:1px solid var(--line);
+    overflow-y:auto;padding:14px 12px 30px;z-index:25;
+  }
+  aside h2{
+    font-size:14px;color:var(--red);margin:2px 6px 10px;
+    font-family:"KaiTi","STKaiti",serif;letter-spacing:2px;
+  }
+  .prov{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px 8px;margin-bottom:10px;box-shadow:0 1px 3px rgba(138,31,20,.05);
+  }
+  .prov h4{
+    font-size:14px;color:var(--red);padding-bottom:6px;margin-bottom:6px;
+    border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .prov h4 small{font-weight:400;color:var(--ink-soft);font-size:11px}
+  .stu{
+    display:flex;gap:8px;align-items:baseline;padding:3px 6px;border-radius:6px;
+    font-size:13px;cursor:pointer;line-height:1.7;transition:background .12s;
+  }
+  .stu:hover{background:var(--gold-soft)}
+  .stu .nm{font-weight:600;flex:0 0 auto}
+  .stu .sc{color:var(--ink-soft);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stu .locate{
+    margin-left:auto;flex:0 0 auto;color:var(--red);opacity:.55;font-size:14px;
+    padding:0 6px;border-radius:6px;line-height:1;
+  }
+  .stu .locate:hover,.stu .locate:active{opacity:1;background:var(--gold-soft)}
+  /* 从「找同学」跳转进来时，命中的那一行高亮 */
+  .stu.hl{background:var(--gold-soft);box-shadow:inset 0 0 0 1px rgba(201,151,63,.55)}
+  .sch-stu i.hl{background:var(--red);color:#f7ead2}
+
+  .drawer-bar{
+    display:none;position:sticky;top:-1px;z-index:3;margin:-14px -12px 10px;
+    padding:10px 14px;background:var(--gold-soft);border-bottom:1px solid var(--line);
+    align-items:center;justify-content:space-between;
+    font-size:15px;font-weight:700;color:var(--red);
+  }
+  .drawer-bar button{
+    border:1px solid var(--line);background:#fffdf8;color:var(--red);
+    font-size:13px;padding:7px 14px;border-radius:999px;cursor:pointer;
+  }
+  #roster-toggle{
+    display:none;position:absolute;right:14px;bottom:16px;z-index:1200;
+    border:1px solid var(--gold-hi);border-radius:999px;background:var(--red);color:#f7ead2;
+    font-size:14px;padding:10px 18px;box-shadow:0 3px 10px rgba(138,31,20,.35);cursor:pointer;
+  }
+
+  /* 信息窗 */
+  .iw{min-width:140px;max-width:250px}
+  .iw-name{font-size:14px;font-weight:700;color:var(--red)}
+  .iw-name small{font-weight:400;color:var(--ink-soft);margin-left:6px;font-size:11px}
+  .iw-stu{font-size:12px;color:var(--ink);margin:4px 0;line-height:1.7}
+
+  /* ---------- 城市·学校面板（点城市名弹出｜桌面端占据「同学录」那一列） ---------- */
+  #city-panel{
+    position:absolute;top:0;right:0;bottom:0;width:340px;max-width:92vw;z-index:1500;
+    background:#fffdf8;border-left:1px solid var(--line);
+    box-shadow:-6px 0 22px rgba(138,31,20,.14);
+    display:flex;flex-direction:column;
+    transform:translateX(102%);visibility:hidden;
+    transition:transform .22s ease,visibility .22s;
+  }
+  #city-panel.open{transform:translateX(0);visibility:visible}
+  .cp-h{
+    display:flex;align-items:center;gap:8px;padding:12px 14px;
+    background:linear-gradient(180deg,#b33224,#8a1f14);border-bottom:2px solid var(--gold-hi);
+  }
+  .cp-h .cp-t{font-family:"KaiTi","STKaiti",serif;font-size:17px;color:var(--gold-hi);
+    letter-spacing:2px;font-weight:700;flex:1 1 auto;min-width:0}
+  .cp-h .cp-n{font-size:11.5px;color:rgba(247,234,210,.85);font-family:sans-serif;letter-spacing:0;
+    font-weight:400;display:block;margin-top:2px}
+  .cp-h button{
+    flex:0 0 auto;border:1px solid var(--gold-hi);background:rgba(247,234,210,.14);color:var(--gold-hi);
+    font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer;
+  }
+  .cp-h button:hover{background:rgba(232,201,122,.24);color:#f2d992}
+  .cp-body{flex:1 1 auto;overflow-y:auto;padding:12px 12px 26px;-webkit-overflow-scrolling:touch}
+  .sch{
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;
+    padding:9px 12px 8px;margin-bottom:10px;
+  }
+  .sch-name{
+    display:flex;align-items:center;gap:6px;text-decoration:none;
+    font-size:14px;font-weight:700;color:var(--ink);line-height:1.5;
+    padding:2px 0;border-bottom:1px dashed var(--line);margin-bottom:5px;
+  }
+  a.sch-name{color:var(--red);cursor:pointer;transition:.13s}
+  a.sch-name:hover{color:var(--red-deep)}
+  a.sch-name .ext{font-size:11px;color:var(--gold);opacity:.9;font-weight:400;flex:0 0 auto}
+  .sch-name .dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex:0 0 auto}
+  .sch-name small{font-weight:400;color:var(--ink-soft);font-size:11px;margin-left:auto;
+    font-family:sans-serif;flex:0 0 auto}
+  .sch-stu{font-size:12.5px;color:var(--ink-soft);line-height:1.8;
+    display:flex;flex-wrap:wrap;gap:0 10px}
+  .sch-stu i{
+    font-style:normal;font-weight:700;color:var(--red-deep);background:var(--gold-soft);
+    border-radius:5px;padding:0 6px;font-family:Consolas,monospace;font-size:12px;
+    cursor:pointer;transition:background .12s,color .12s;
+  }
+  .sch-stu i:hover{background:var(--red);color:#f7ead2}
+  .cp-foot{padding:8px 14px;border-top:1px solid var(--line);background:var(--gold-soft);
+    font-size:10.5px;color:var(--ink-soft);line-height:1.6}
+
+  /* 地图上的城市标签做成可点击 */
+  .city-chip{
+    display:inline-block;background:rgba(255,253,248,.94);border:1px solid var(--line);
+    border-radius:999px;padding:2px 9px;font-size:12px;color:var(--red);font-weight:600;
+    white-space:nowrap;box-shadow:0 1px 4px rgba(138,31,20,.16);cursor:pointer;
+    transition:.13s;
+  }
+  /* 地图缩得很小时标签变紧凑，让更多城市名能放得下 */
+  #tmap-chips.dense .city-chip{padding:1px 6px;font-size:11px;font-weight:500}
+  #tmap-chips.dense .city-chip b{font-size:10px}
+  .city-chip:hover,.city-chip.active{background:var(--red);color:#f7ead2;border-color:var(--red-deep)}
+  .city-chip b{color:var(--red);font-weight:700;margin-left:3px}
+  .city-chip:hover b,.city-chip.active b{color:#f2d992}
+  /* 被弹窗盖住的相邻标签整体让位，避免只露出半个角 */
+  .city-chip.under-pop{opacity:0;pointer-events:none}
+
+  /* ---------- 城市弹窗：自绘气泡，四向择位避开城市标签 ---------- */
+  .tmap-pop{
+    position:absolute;left:0;top:0;z-index:1160;pointer-events:auto;
+    opacity:0;transition:opacity .16s ease;will-change:opacity;
+  }
+  .tmap-pop.on{opacity:1}
+  .tmap-pop .pop-card{
+    position:relative;min-width:176px;max-width:258px;
+    background:rgba(255,253,248,.98);border:1px solid var(--line);border-radius:12px;
+    padding:10px 12px 9px;font-size:12.5px;line-height:1.65;
+    box-shadow:0 8px 26px rgba(138,31,20,.18);
+  }
+  .tmap-pop .pop-x{
+    position:absolute;top:4px;right:4px;width:22px;height:22px;border:0;background:none;
+    color:var(--ink-soft);font-size:13px;line-height:1;cursor:pointer;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;font-family:inherit;
+  }
+  .tmap-pop .pop-x:hover{background:var(--gold-soft);color:var(--red-deep)}
+  .tmap-pop .pop-t{
+    font-weight:700;color:var(--red-deep);font-size:14px;padding-right:24px;letter-spacing:.4px;
+  }
+  .tmap-pop .pop-t span{font-weight:400;color:var(--ink-soft);font-size:11px;margin-left:6px}
+  .tmap-pop .pop-body.scroll{max-height:186px;overflow-y:auto;overscroll-behavior:contain}
+  .tmap-pop .pop-more{color:var(--ink-soft);font-size:11px;padding-top:2px}
+  .tmap-pop .pop-foot{
+    display:block;margin-top:6px;padding:0;border:0;background:none;font-family:inherit;
+    font-size:11.5px;color:var(--red);cursor:pointer;text-align:left;
+  }
+  .tmap-pop .pop-foot:hover{text-decoration:underline}
+  /* 小三角：始终指向被点的那颗红点 */
+  .tmap-pop .pop-arrow{
+    position:absolute;width:0;height:0;border:7px solid transparent;pointer-events:none;
+  }
+  .tmap-pop[data-dir="up"] .pop-arrow{border-top-color:rgba(255,253,248,.98);bottom:-13px;margin-left:-7px}
+  .tmap-pop[data-dir="down"] .pop-arrow{border-bottom-color:rgba(255,253,248,.98);top:-13px;margin-left:-7px}
+  .tmap-pop[data-dir="right"] .pop-arrow{border-right-color:rgba(255,253,248,.98);left:-13px;margin-top:-7px}
+  .tmap-pop[data-dir="left"] .pop-arrow{border-left-color:rgba(255,253,248,.98);right:-13px;margin-top:-7px}
+  .tmap-pop.no-arrow .pop-arrow{display:none}
+
+  .empty{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:40px;color:var(--ink-soft);font-size:14px;line-height:2.2;background:var(--bg);
+  }
+  .empty b{color:var(--red);font-size:20px;font-family:"KaiTi","STKaiti",serif;margin-bottom:6px}
+
+  footer{
+    flex:0 0 auto;text-align:center;font-size:11px;color:var(--gold-hi);letter-spacing:.06em;
+    padding:5px;padding-bottom:calc(5px + env(safe-area-inset-bottom));
+    border-top:2px solid var(--gold-hi);background:linear-gradient(180deg,#8a1f14,#6e1409);
+  }
+
+  /* ---------- 手机端 ---------- */
+  @media (max-width:900px){
+    header{padding:8px 12px 6px;gap:10px}
+    .logo{width:40px;height:40px}
+    h1{font-size:16px;line-height:1.3}
+    .stats{font-size:11px}
+    .campus-links{order:9;margin-left:0;flex:1 1 100%;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      gap:6px;padding-bottom:3px;scrollbar-width:none}
+    .campus-links::-webkit-scrollbar{display:none}
+    .campus-links a,.campus-links .back,.campus-links #bgm-btn{font-size:12px;padding:6px 10px;flex:0 0 auto}
+    .teachers{top:8px;left:8px;width:auto;max-width:64vw;padding:7px 10px;font-size:11px;line-height:1.75}
+    .legend{left:8px;font-size:11px;padding:6px 9px;line-height:1.9;max-width:64vw;
+      bottom:calc(104px + env(safe-area-inset-bottom))}
+    .legend small{display:none}
+    aside{
+      position:absolute;inset:0;flex:none;width:100%;border-left:none;
+      transform:translateY(102%);transition:transform .25s ease;background:var(--bg);
+      padding:14px 12px calc(24px + env(safe-area-inset-bottom));
+      -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+    }
+    aside.open{transform:translateY(0)}
+    body.drawer-open #map{visibility:hidden}
+    .drawer-bar{display:flex}
+    aside h2{display:none}
+    .stu{padding:10px 8px;font-size:14px;min-height:42px;align-items:center}
+    .stu .sc{font-size:12px}
+    .stu .locate{font-size:16px;padding:0 8px}
+    #roster-toggle{display:block;bottom:calc(88px + env(safe-area-inset-bottom));padding:12px 20px;font-size:15px}
+    aside.open ~ #roster-toggle{display:none}
+    footer{display:none}
+    /* 城市面板在手机上全宽 */
+    #city-panel{width:100%;max-width:100%;border-left:none}
+    .cp-body{padding:10px 10px calc(20px + env(safe-area-inset-bottom))}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="game/xiaoqing.png" alt="宁夏银川一中建校120周年纪念标">
+  <div class="title-wrap">
+    <h1 id="title">2026届高三班级<em>“蹭饭图”</em></h1>
+    <div class="stats" id="stats">统计中……</div>
+  </div>
+  <nav class="campus-links">
+    <!-- 🎵 音乐：放在顶栏最左（手机端第二行行首），不再用右下角浮动按钮遮挡「同学名单」 -->
+    <button id="bgm-btn" type="button">🎵 音乐</button>
+    <a id="game-chip" class="game-chip" href="game/index.html" style="display:none"
+       title="进入小游戏（宁夏银川一中 · 百廿校庆）">🎮 2班人会飞</a>
+    <a class="back" href="index.html">← 返回总入口</a>
+  </nav>
+</header>
+
+<main>
+  <div id="map-wrap">
+    <div id="map"></div>
+
+    <div class="teachers" id="teachers" style="display:none">
+      <h3 id="teachers-h" role="button" tabindex="0" aria-expanded="true">相伴三年的老师们 ▾</h3>
+      <div class="t-body" id="t-body"></div>
+    </div>
+
+    <div class="legend">
+      <div><i class="k"></i>同学所在城市 <small>共 <b id="lg-city">0</b> 城</small></div>
+      <div><small>点标注看名单 · 点右侧 ◎ 定位</small></div>
+    </div>
+
+    <div class="map-fallback" id="map-fallback">
+      <div>
+        <b>地图加载失败</b>（需要联网加载腾讯地图）<br>
+        右侧「同学名单」功能不受影响，仍然可以查看全部去向。
+      </div>
+    </div>
+
+    <div class="empty" id="empty" style="display:none"></div>
+  </div>
+
+  <aside id="roster">
+    <div class="drawer-bar">
+      <span>同学名单</span>
+      <button id="roster-close" type="button">关闭 ✕</button>
+    </div>
+    <h2>同学录 · 按地区</h2>
+    <div id="prov-list"></div>
+  </aside>
+
+  <!-- 点城市名弹出的「该城同学 & 学校」面板：桌面端正好占据同学录那一列 -->
+  <div id="city-panel" role="dialog" aria-label="城市去向详情">
+    <div class="cp-h">
+      <div class="cp-t" id="cp-title">城市<span class="cp-n"></span></div>
+      <button id="cp-close" type="button">关闭 ✕</button>
+    </div>
+    <div class="cp-body" id="cp-body"></div>
+    <div class="cp-foot">点学校名可跳转该校官网 · 点学生首字母可在名单中定位</div>
+  </div>
+
+  <button id="roster-toggle">同学名单</button>
+</main>
+
+<footer>宁夏银川一中 · 建校120周年（1906—2026）· 人名以拼音首字母显示，仅供班级留念 · 名单如有错漏，请联系班里负责整理的同学</footer>
+
+<script src="data/years.js"></script>
+<script src="assets/year-loader.js"></script>
+<script>
+  /* ══════════════ 腾讯地图 key ══════════════
+     ① 本地 / 预览：保持空字符串，SDK 走内置代理，前端不出现密钥；
+     ② 部署到线上：填自己的 key（申请步骤见 docs/腾讯地图key与Netlify部署.md），
+        并务必在腾讯位置服务后台给该 key 配置 Referer 白名单。
+
+     维护说明（不对外显示）：名单在 data/<届别>.js 中，格式 ["首字母","大学·城市"]；
+     改完请在控制台 eval 一遍——语法合法 ≠ 运行不报错（常见为漏逗号）。 */
+  var TENCENT_MAP_KEY = '6FWBZ-4XTE7-F7ZX7-HPBUR-TTMD7-O2FOO';
+
+  if (!TENCENT_MAP_KEY) {
+    window._TMapSecurityConfig = {
+      serviceHost: 'http://127.0.0.1:__WB_HTTP_PORT__/_TMapService/_wbt/__WB_TMAP_SECRET__'
+    };
+  }
+  (function () {
+    var s = document.createElement('script');
+    s.src = 'https://map.qq.com/api/gljs?v=1.exp' +
+            (TENCENT_MAP_KEY ? '&key=' + encodeURIComponent(TENCENT_MAP_KEY) : '');
+    document.head.appendChild(s);
+  })();
+</script>
+<script src="assets/tmap.js"></script>
+<script src="assets/uni-url.js"></script>
+<script src="assets/bgm.js" defer></script>
+<script src="assets/festival.js" defer></script>
+<script>
+(function(){
+  var CN = ['','一','二','三','四','五','六','七','八','九','十',
+            '十一','十二','十三','十四','十五','十六'];
+  var m = location.search.match(/[?&]cls=(\d+)/);
+  var no = m ? parseInt(m[1], 10) : 0;
+  var DATA = window.CLASS_DATA || {};
+  var LOAD_FAIL = !window.CLASS_DATA;      /* 数据文件没加载成功（语法错/路径错） */
+  var data = DATA[String(no)];
+
+  /* 届别：标题、返回链接都跟着所选届别走 */
+  var Y = window.YCYEZ_YEAR || null;
+  var YL = Y ? Y.label : '2026届';
+  var back = document.querySelector('.back');
+  if (back) {
+    back.href = 'index.html' +
+      (window.yearQuery && window.yearQuery() ? '?' + window.yearQuery() : '');
+  }
+
+  document.title = '蹭饭图 · ' + YL + '高三(' + no + ')班';
+  document.getElementById('title').innerHTML =
+    YL + '高三(' + no + ')班<em>“蹭饭图”</em>';
+
+  /* 🎮 小游戏入口：仅 2 班页面显示 */
+  if (no === 2) document.getElementById('game-chip').style.display = '';
+
+  /* 节日彩蛋（assets/festival.js）：9/10 教师节、1/1 元旦。
+     只在 2 班页面开启；想让所有班都弹，把下面这行改成 window.FESTIVAL_ENABLED = true; */
+  window.FESTIVAL_ENABLED = (no === 2);
+
+  var IS_MOBILE = window.matchMedia('(max-width:900px)').matches ||
+    ('ontouchstart' in window && window.matchMedia('(pointer:coarse)').matches);
+  if (IS_MOBILE) document.body.classList.add('is-mobile');
+
+  /* ---------- 无数据班级：整页占位 ---------- */
+  if (!data) {
+    document.getElementById('stats').textContent = LOAD_FAIL ? '数据加载失败' : '暂无数据';
+    var empty = document.getElementById('empty');
+    empty.style.display = 'flex';
+    empty.innerHTML = LOAD_FAIL
+      ? '<div><b>数据没有加载成功</b><br>' +
+        '请刷新页面试试；如果一直这样，请联系班里负责整理的同学。</div>'
+      : '<div><b>高三' + (CN[no] || no) + '班</b><br>' +
+        '这一班的蹭饭图还没有收录。<br>如果你手上有原图，欢迎联系班里负责整理的同学。</div>';
+    document.getElementById('map').style.display = 'none';
+    document.getElementById('roster').style.display = 'none';
+    return;
+  }
+
+  /* ================= 1. 把班级数据聚合到城市坐标 ================= */
+  var CITY = window.TMAP;
+
+  /* 显示用城市名：一律落到「地级市」，避免同一省内两个点都标成省名
+     优先级：①「大学·城市」里显式写的城市 → ②按坐标反查地级市 → ③地区名 */
+  function cityLabel(region, stu, coord) {
+    if (stu[1] && stu[1].indexOf('·') >= 0) {
+      var c = stu[1].split('·').pop().trim();
+      if (CITY.hasCity(c)) return c;
+    }
+    if (coord && CITY.cityNameByCoord) {
+      var byCoord = CITY.cityNameByCoord(coord[0], coord[1]);
+      if (byCoord) return byCoord;
+    }
+    return String(region).split('/')[0].trim();
+  }
+
+  var byCoord = {};   /* "lng,lat" → { city, lng, lat, students, schools } */
+  var totalStu = 0;
+
+  /* 从「大学·城市」取校名；没有校名（老数据只写省份）时记为空 */
+  function schoolOf(stu) {
+    if (!stu[1]) return '';
+    if (stu[1].indexOf('·') >= 0) return stu[1].split('·')[0].trim();
+    /* 不含「·」的条目：含「大学/学院」才当作校名，否则视为城市/省份 */
+    if (/大学|学院/.test(stu[1])) return stu[1].trim();
+    return '';
+  }
+
+  data.regions.forEach(function(r){
+    r[1].forEach(function(stu){
+      totalStu++;
+      var coord = CITY.geocode(stu[1]) || CITY.geocode(r[0]);
+      if (!coord) return;                       /* 定位失败 → 不计入地图（名单里仍在） */
+      var key = coord[0].toFixed(2) + ',' + coord[1].toFixed(2);
+      if (!byCoord[key]) {
+        byCoord[key] = {
+          city: cityLabel(r[0], stu, coord), lng: coord[0], lat: coord[1],
+          students: [], schools: {}, schoolOrder: []
+        };
+      }
+      var point = byCoord[key];
+      point.students.push(stu[0]);
+      /* 「大学·城市」时记下城市名（用于显示） */
+      if (stu[1] && stu[1].indexOf('·') >= 0) {
+        var c = stu[1].split('·').pop().trim();
+        if (CITY.hasCity(c)) point.city = c;
+      }
+      /* 按学校归组 */
+      var sch = schoolOf(stu) || '去向见原图';
+      if (!point.schools[sch]) { point.schools[sch] = []; point.schoolOrder.push(sch); }
+      point.schools[sch].push(stu[0]);
+    });
+  });
+
+  var POINTS = Object.keys(byCoord).map(function(k){
+    var p = byCoord[k];
+    p.count = p.students.length;
+    return p;
+  }).sort(function(a, b){ return b.count - a.count; });
+
+  var BY_CITY = {};
+  POINTS.forEach(function(p){ BY_CITY[p.city] = p; });
+
+  /* ---------- 顶栏统计 ---------- */
+  document.getElementById('stats').textContent =
+    '共 ' + totalStu + ' 位同学 · 分布于 ' + POINTS.length + ' 座城市 · ' +
+    (IS_MOBILE ? '点「同学名单」查看全部' : '点标注查看名单');
+  document.getElementById('lg-city').textContent = POINTS.length;
+
+  /* ---------- 老师卡片 ---------- */
+  if (data.teachers && data.teachers.length) {
+    var box = document.getElementById('teachers');
+    box.style.display = '';
+    var tb = document.getElementById('t-body');
+    data.teachers.forEach(function(t){
+      var row = document.createElement('div');
+      row.className = 't-row';
+      row.innerHTML = '<span>' + t[0] + '</span><span class="t-role">' + t[1] + '</span>';
+      tb.appendChild(row);
+    });
+    var th = document.getElementById('teachers-h');
+    function toggleTeachers(){
+      box.classList.toggle('collapsed');
+      var c = box.classList.contains('collapsed');
+      th.textContent = c ? '相伴三年的老师们 ▸' : '相伴三年的老师们 ▾';
+      th.setAttribute('aria-expanded', c ? 'false' : 'true');
+    }
+    th.addEventListener('click', toggleTeachers);
+    th.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+        e.preventDefault(); toggleTeachers();
+      }
+    });
+    if (IS_MOBILE) {
+      box.classList.add('collapsed');
+      th.textContent = '相伴三年的老师们 ▸';
+      th.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  /* ================= 2. 侧栏名单（按地区，点击定位到地图） ================= */
+  (function(){
+    var box = document.getElementById('prov-list');
+    data.regions.forEach(function(r){
+      var card = document.createElement('div');
+      card.className = 'prov';
+      card.innerHTML = '<h4>' + r[0] + '<small>' + r[1].length + ' 人</small></h4>';
+      r[1].forEach(function(stu){
+        var coord = CITY.geocode(stu[1]) || CITY.geocode(r[0]);
+        var row = document.createElement('div');
+        row.className = 'stu';
+        row.setAttribute('data-ini', stu[0]);
+        row.innerHTML = '<span class="nm">' + stu[0] + '</span>' +
+          '<span class="sc">' + (stu[1] || '去向见原图') + '</span>' +
+          (coord ? '<span class="locate" title="查看该城学校">▸</span>' : '');
+        if (coord) {
+          row.setAttribute('role', 'button');
+          row.tabIndex = 0;
+          var loc = row.querySelector('.locate');
+          loc.addEventListener('click', function(e){
+            e.stopPropagation();
+            gotoPoint(coord);
+          });
+          row.addEventListener('click', function(){ gotoPoint(coord); });
+          row.addEventListener('keydown', function(e){
+            if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+              e.preventDefault();
+              gotoPoint(coord);
+            }
+          });
+        }
+        card.appendChild(row);
+      });
+      box.appendChild(card);
+    });
+  })();
+
+  /* 名单点击 → 关抽屉 + 地图飞到该城市 */
+  function gotoPoint(coord){
+    closeDrawer();
+    var key = coord[0].toFixed(2) + ',' + coord[1].toFixed(2);
+    var p = byCoord[key];
+    if (p && window.TMAP.isReady()) window.TMAP.focusCity(p.city);
+  }
+
+  /* ================= 2.5 城市 → 学校 面板 ================= */
+  var panel = document.getElementById('city-panel');
+  var cpBody = document.getElementById('cp-body');
+  var cpTitle = document.getElementById('cp-title');
+
+  function openCity(city, opt){
+    var p = BY_CITY[city];
+    if (!p) return;
+    cpTitle.innerHTML = city + '<span class="cp-n">' + p.count + ' 位同学 · ' +
+      p.schoolOrder.length + ' 所学校 · 点校名进入官网</span>';
+    cpBody.innerHTML = '';
+
+    /* 人多的学校排在前面 */
+    p.schoolOrder.slice().sort(function(a, b){
+      return p.schools[b].length - p.schools[a].length;
+    }).forEach(function(sch){
+      var names = p.schools[sch];
+      var url = (window.uniUrl && window.uniUrl(sch)) || null;
+      var card = document.createElement('div');
+      card.className = 'sch';
+
+      var head;
+      if (url) {
+        head = document.createElement('a');
+        head.className = 'sch-name';
+        head.href = url;
+        head.target = '_blank';
+        head.rel = 'noopener';
+        head.title = '前往 ' + sch + ' 官网';
+        head.innerHTML = '<span class="dot"></span>' + sch +
+          '<span class="ext">官网 ↗</span><small>' + names.length + ' 人</small>';
+      } else {
+        head = document.createElement('div');
+        head.className = 'sch-name';
+        head.innerHTML = '<span class="dot"></span>' + sch +
+          '<small>' + names.length + ' 人</small>';
+      }
+
+      var list = document.createElement('div');
+      list.className = 'sch-stu';
+      list.innerHTML = names.map(function(n){ return '<i>' + n + '</i>'; }).join('');
+
+      card.appendChild(head);
+      card.appendChild(list);
+      cpBody.appendChild(card);
+    });
+
+    panel.classList.add('open');
+    closeDrawer();               /* 手机端先收起名单抽屉，避免和面板叠在一起 */
+    if (opt && opt.highlight) {
+      Array.prototype.forEach.call(cpBody.querySelectorAll('.sch-stu i'), function(el){
+        if (el.textContent === opt.highlight) el.classList.add('hl');
+      });
+    }
+    if (window.TMAP.isReady()) {
+      if (window.TMAP.markChip) window.TMAP.markChip(city);
+      /* 缩放停在省 / 城市群级别；地图上留一张小卡片做点击反馈，完整名单在右侧面板 */
+      window.TMAP.focusCity(city);
+    }
+    if (opt && opt.focus) {
+      setTimeout(function(){
+        try { document.getElementById('cp-close').focus({ preventScroll: true }); } catch (e) {}
+      }, 240);
+    }
+  }
+
+  function closeCity(restoreFocus){
+    if (!panel.classList.contains('open')) return;
+    panel.classList.remove('open');
+    if (window.TMAP.markChip) window.TMAP.markChip('');
+    if (window.TMAP.closePop) window.TMAP.closePop();
+    if (restoreFocus) { try { restoreFocus.focus({ preventScroll: true }); } catch (e) {} }
+  }
+
+  document.getElementById('cp-close').addEventListener('click', function(){
+    closeCity(document.getElementById('cp-close'));
+  });
+
+  /* Esc 关闭城市面板 */
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' || e.keyCode === 27) closeCity(null);
+  });
+
+  /* 面板里点学生首字母 → 回到名单并高亮该行（面板底部写着这条，得真能用） */
+  cpBody.addEventListener('click', function(e){
+    var t = e.target;
+    if (!t || t.tagName !== 'I' || !t.parentNode.classList.contains('sch-stu')) return;
+    var ini = t.textContent.trim();
+    var row = document.querySelector('.stu[data-ini="' + ini + '"]');
+    if (!row) return;
+    Array.prototype.forEach.call(document.querySelectorAll('.stu.hl'), function(el){
+      el.classList.remove('hl');
+    });
+    row.classList.add('hl');
+    closeCity(null);
+    if (IS_MOBILE) document.getElementById('roster-toggle').click();
+    setTimeout(function(){
+      try { row.scrollIntoView({ block: 'center' }); } catch (err) {}
+    }, 260);
+  });
+
+  /* 侧栏地区卡片标题也能打开面板（取该地区第一所可定位城市） */
+  function openByCoord(coord){
+    var key = coord[0].toFixed(2) + ',' + coord[1].toFixed(2);
+    var p = byCoord[key];
+    if (p) openCity(p.city);
+  }
+
+  /* ---------- 名单抽屉开关 ---------- */
+  (function(){
+    var aside = document.getElementById('roster');
+    var btn = document.getElementById('roster-toggle');
+    function setOpen(open){
+      aside.classList.toggle('open', open);
+      document.body.classList.toggle('drawer-open', open);
+      btn.textContent = open ? '收起名单' : '同学名单';
+    }
+    btn.addEventListener('click', function(){ setOpen(!aside.classList.contains('open')); });
+    document.getElementById('roster-close').addEventListener('click', function(){ setOpen(false); });
+  })();
+  function closeDrawer(){
+    var aside = document.getElementById('roster');
+    if (!aside.classList.contains('open')) return;
+    aside.classList.remove('open');
+    document.body.classList.remove('drawer-open');
+    document.getElementById('roster-toggle').textContent = '同学名单';
+  }
+
+  /* ================= 2.6 从「找同学」跳转进来：定位 + 高亮 ================= */
+  (function(){
+    var m = location.search.match(/[?&]q=([^&]*)/);
+    if (!m) return;
+    var q = decodeURIComponent(m[1]).replace(/\+/g, ' ').trim().toUpperCase();
+    if (!q) return;
+
+    var found = null;
+    data.regions.forEach(function(r){
+      r[1].forEach(function(stu){
+        if (!found && stu[0] === q) found = { stu: stu, region: r[0] };
+      });
+    });
+    if (!found) return;
+
+    /* 先在名单里高亮命中的行 */
+    var hit = null;
+    Array.prototype.forEach.call(document.querySelectorAll('.stu[data-ini]'), function(el){
+      if (el.getAttribute('data-ini') === q) {
+        el.classList.add('hl');
+        if (!hit) hit = el;
+      }
+    });
+    setTimeout(function(){
+      if (hit && hit.scrollIntoView) { try { hit.scrollIntoView({ block: 'center' }); } catch (e) {} }
+    }, 350);
+
+    var coord = CITY.geocode(found.stu[1]) || CITY.geocode(found.region);
+    if (!coord) return;
+    var key = coord[0].toFixed(2) + ',' + coord[1].toFixed(2);
+    var p = byCoord[key];
+    if (!p) return;
+
+    /* 等地图就绪再飞过去（最多等约 12 秒，超时也把面板打开） */
+    (function open(tries){
+      if (window.TMAP && window.TMAP.isReady()) {
+        openCity(p.city, { highlight: q });
+        return;
+      }
+      if (tries <= 0) { openCity(p.city, { highlight: q }); return; }
+      setTimeout(function(){ open(tries - 1); }, 300);
+    })(40);
+  })();
+
+  /* ================= 3. 地图 ================= */
+  (function(){
+    var fallbackEl = document.getElementById('map-fallback');
+    function showFallback(){ fallbackEl.style.display = 'flex'; }
+
+    window.MAP_POINTS = POINTS;          /* 便于排查 */
+    window.MAP_BY_CITY = BY_CITY;
+    window.openCity = openCity;          /* 控制台可直接调试：openCity('北京') */
+
+    function boot(){
+      if (typeof TMap === 'undefined') { showFallback(); return; }
+      try {
+        window.TMAP.init({
+          containerId: 'map',
+          points: POINTS,
+          onCityClick: function(city){ openCity(city); }   /* 点城市标签 → 弹出该校详情 */
+        });
+        if (!window.TMAP.isReady()) showFallback();
+      } catch (e) { showFallback(); }
+    }
+
+    /* SDK 动态加载，轮询等待（最多约 12 秒） */
+    (function waitForMap(tries){
+      if (typeof TMap !== 'undefined') { boot(); return; }
+      if (tries <= 0) { showFallback(); return; }
+      setTimeout(function(){ waitForMap(tries - 1); }, 300);
+    })(40);
+
+    /* 横竖屏 / 尺寸变化后重新适配 */
+    var lastW = 0, pending = false;
+    function refit(){
+      if (pending) return;
+      pending = true;
+      setTimeout(function(){
+        pending = false;
+        if (window.TMAP.isReady()) window.TMAP.refit();
+      }, 200);
+    }
+    window.addEventListener('orientationchange', function(){ setTimeout(refit, 120); });
+    window.addEventListener('resize', function(){
+      var w = document.getElementById('map').clientWidth;
+      if (Math.abs(w - lastW) >= 80) { lastW = w; refit(); }
+    });
+  })();
+})();
+</script>
+</body>
+</html>

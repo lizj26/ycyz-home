@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="宁夏银川一中「蹭饭图」总入口：按届别分卷，点开各班，看看同学们毕业后都去了哪里。">
+<meta name="theme-color" content="#a9291c">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="game/xiaoqing.png">
+<title>蹭饭图总入口 · 宁夏银川一中 · 百廿校庆</title>
+<style>
+  :root{
+    /* 百廿校庆主题：绛红 + 鎏金（取自120周年纪念标） */
+    --bg:#faf4e8; --panel:#fffdf8; --ink:#4a2c22; --ink-soft:#8a6f5c;
+    --red:#a9291c; --red-deep:#8a1f14; --red-soft:#f7e8dd;
+    --gold:#c9973f; --gold-hi:#e8c97a; --gold-soft:#f6ecd4; --line:#e9d9bd;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  button,a,.card{touch-action:manipulation}
+  a:focus-visible,button:focus-visible,.card:focus-visible{
+    outline:2px solid var(--gold);outline-offset:2px;border-radius:6px;
+  }
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;
+    background:linear-gradient(180deg,#faf4e8,#f5ecd9);color:var(--ink);min-height:100vh;
+    -webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;
+  }
+  @supports (min-height:100dvh){ body{min-height:100dvh} }
+
+  /* ---------- 顶栏（校庆绛红渐变 + 金线收边 + 120周年纪念标） ---------- */
+  header{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:12px 18px;background:linear-gradient(180deg,#b33224,#8a1f14);
+    border-bottom:2px solid var(--gold-hi);position:relative;z-index:30;
+    padding-top:calc(12px + env(safe-area-inset-top));
+    box-shadow:0 2px 12px rgba(138,31,20,.28);
+  }
+  .logo{
+    width:52px;height:52px;flex:0 0 auto;border-radius:50%;object-fit:cover;
+    border:2px solid var(--gold-hi);background:#8a1f14;
+    box-shadow:0 2px 8px rgba(60,10,6,.4);
+  }
+  .title-wrap{min-width:0;flex:1 1 auto}
+  h1{
+    font-size:22px;letter-spacing:1px;color:#f7ead2;
+    font-family:"KaiTi","STKaiti","PingFang SC",serif;font-weight:700;
+    text-shadow:0 1px 6px rgba(60,10,6,.45);
+  }
+  h1 em{font-style:normal;color:var(--gold-hi)}
+  .stats{font-size:12px;color:rgba(247,234,210,.85);margin-top:3px;line-height:1.5}
+  /* 音乐按钮：红底上的金色芯片（覆盖 bgm.js 的绿色默认样式） */
+  .header-actions #bgm-btn{
+    background:rgba(247,234,210,.14);border:1px solid var(--gold-hi);color:var(--gold-hi);
+  }
+  .header-actions #bgm-btn:hover{background:rgba(232,201,122,.24);color:#f2d992;border-color:#f2d992}
+  .header-actions #bgm-btn[aria-pressed="false"]{color:rgba(247,234,210,.6);background:rgba(0,0,0,.12)}
+  /* 🎵 音乐按钮：放在顶栏右侧（手机端独占一行行首 = 左上角），不再用右下角浮动按钮 */
+  .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex:0 0 auto}
+  .header-actions #bgm-btn{flex:0 0 auto}
+  /* 回门户的入口：和音乐按钮同色的金色胶囊 */
+  .home-chip{
+    flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;
+    font-size:12px;padding:5px 11px;border-radius:999px;text-decoration:none;
+    color:var(--gold-hi);border:1px solid var(--gold-hi);
+    background:rgba(247,234,210,.14);white-space:nowrap;
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .home-chip:hover{background:rgba(232,201,122,.24);color:#f2d992;border-color:#f2d992}
+  @media (max-width:540px){ .hc-txt{display:none} .home-chip{padding:5px 10px} }
+
+  /* ---------- 主体 ---------- */
+  main{max-width:1120px;margin:0 auto;padding:22px 18px 48px}
+
+  /* ---------- 校庆横幅（AI 生成红金书卷背景） ---------- */
+  .hero{
+    position:relative;border-radius:18px;overflow:hidden;margin:2px 4px 24px;
+    background:url("assets/banner-120.webp") center 30%/cover no-repeat var(--red);
+    min-height:200px;display:flex;align-items:center;
+    border:1px solid rgba(232,201,122,.55);
+    box-shadow:0 8px 26px rgba(138,31,20,.25);
+  }
+  .hero::after{ /* 左侧压一点暗角，保证标题可读 */
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg,rgba(110,18,10,.55) 0%,rgba(110,18,10,.18) 46%,rgba(110,18,10,0) 70%);
+  }
+  .hero-inner{position:relative;z-index:1;padding:26px 34px}
+  .hero-title{
+    font-family:"KaiTi","STKaiti",serif;font-weight:700;color:#f2d992;
+    font-size:clamp(26px,4.6vw,42px);letter-spacing:.16em;
+    text-shadow:0 2px 16px rgba(60,10,6,.6);
+  }
+  .hero-sub{
+    margin-top:10px;color:#f7ead2;font-size:clamp(12px,1.9vw,15px);
+    letter-spacing:.34em;opacity:.95;text-shadow:0 1px 8px rgba(60,10,6,.5);
+  }
+  .hero-tag{
+    display:inline-block;margin-top:14px;font-size:12px;font-weight:700;letter-spacing:.12em;
+    color:var(--red-deep);background:linear-gradient(90deg,var(--gold-hi),#f2d992);
+    border-radius:999px;padding:4px 14px;box-shadow:0 2px 8px rgba(60,10,6,.3);
+  }
+
+  .sec-h{
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 4px 14px;
+    font-family:"KaiTi","STKaiti",serif;letter-spacing:2px;color:var(--red);font-size:16px;
+  }
+  .sec-h::before{content:"";width:4px;height:16px;border-radius:2px;align-self:center;
+    background:linear-gradient(180deg,var(--gold-hi),var(--gold))}
+  .sec-h small{font-family:sans-serif;letter-spacing:0;font-weight:400;color:var(--ink-soft);font-size:11.5px}
+
+  /* ---------- 全校总览带（比 16 张卡片更早给出「这一届散到哪去了」） ---------- */
+  .board{
+    margin:0 4px 16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:15px 18px 16px;box-shadow:0 2px 10px rgba(138,31,20,.06);
+    display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:8px 30px;
+    align-items:center;
+  }
+  .board-k{
+    grid-column:1/-1;display:flex;align-items:center;gap:8px;
+    font-size:11px;letter-spacing:.16em;color:var(--ink-soft);
+  }
+  .board-k::after{content:"";flex:1 1 auto;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .bstats{display:flex;gap:0;flex-wrap:wrap;align-items:flex-end}
+  .bstat{padding:0 20px;border-left:1px solid var(--line)}
+  .bstat:first-child{padding-left:0;border-left:0}
+  .bstat:last-child{padding-right:0}
+  .bstat b{
+    display:block;font-family:"KaiTi","STKaiti",serif;font-size:30px;line-height:1.05;
+    color:var(--red);font-variant-numeric:tabular-nums;
+  }
+  .bstat span{font-size:11.5px;color:var(--ink-soft);letter-spacing:.05em}
+  .bstat.city b{font-size:22px;letter-spacing:.02em}
+  .bstat.city span{display:block;margin-top:2px}
+  .cities{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .cities .c-h{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;margin-bottom:1px}
+  .bar-row{display:grid;grid-template-columns:54px minmax(0,1fr) 34px;align-items:center;gap:8px;font-size:11.5px}
+  .bar-row .n{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bar-row .t{height:6px;border-radius:99px;background:#f3ead6;overflow:hidden}
+  .bar-row .t i{display:block;height:100%;border-radius:99px;
+    background:linear-gradient(90deg,var(--gold-hi),var(--red));width:0;transition:width .7s cubic-bezier(.22,1,.36,1)}
+  .bar-row .v{text-align:right;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+
+  /* ---------- 找同学（首字母 → 班级 + 去向） ---------- */
+  .tools{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 4px 14px}
+  .tools .sec-h{margin:0}
+  .finder{position:relative;flex:1 1 260px;max-width:400px;margin-left:auto}
+  .finder .icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+    font-size:13px;color:var(--gold);pointer-events:none;line-height:1}
+  .finder input{
+    width:100%;padding:11px 14px 11px 36px;border:1px solid var(--line);border-radius:12px;
+    background:var(--panel);color:var(--ink);font-family:inherit;font-size:13.5px;
+    box-shadow:0 1px 4px rgba(138,31,20,.05);outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .finder input::placeholder{color:#b7a692}
+  .finder input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,151,63,.16)}
+  .results{
+    position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:60;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 12px 30px rgba(138,31,20,.18);overflow-y:auto;
+    max-height:min(56vh,330px);display:none;
+  }
+  .results.on{display:block}
+  .results a{
+    display:flex;align-items:baseline;gap:9px;padding:9px 14px;text-decoration:none;
+    color:var(--ink);font-size:13px;border-bottom:1px solid #f5eddf;
+  }
+  .results a:last-child{border-bottom:0}
+  .results a:hover,.results a:focus{background:var(--gold-soft);outline:none}
+  .results b{color:var(--red);font-family:Consolas,"Courier New",monospace;letter-spacing:.05em}
+  .results .cls{color:var(--ink-soft);font-size:11.5px;flex:0 0 auto}
+  .results .pl{margin-left:auto;color:var(--ink-soft);font-size:11.5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .results .tip{padding:12px 14px;color:var(--ink-soft);font-size:12.5px;line-height:1.8}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+
+  .card{
+    display:flex;flex-direction:column;text-decoration:none;background:var(--panel);
+    border:1px solid var(--line);border-radius:14px;padding:15px 16px 14px;
+    box-shadow:0 1px 4px rgba(138,31,20,.06);position:relative;overflow:hidden;
+    min-height:106px;
+    transition:transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(138,31,20,.16);border-color:var(--gold)}
+  .card>*{position:relative;z-index:1}
+  .corner{
+    position:absolute;top:-16px;right:-16px;width:72px;height:72px;border-radius:50%;
+    background:var(--gold-soft);z-index:0;
+  }
+  .arrow{
+    position:absolute;right:15px;top:15px;z-index:2;font-size:15px;color:var(--gold);
+    opacity:0;transform:translateX(-4px);transition:opacity .15s, transform .15s;
+  }
+  .card:hover .arrow,.card:focus-visible .arrow{opacity:1;transform:translateX(0)}
+  .no{
+    font-family:"KaiTi","STKaiti",serif;font-size:15px;line-height:1;color:var(--ink-soft);
+    letter-spacing:1px;
+  }
+  .no b{font-size:40px;color:var(--red);margin:0 2px;vertical-align:-5px}
+  .meta{margin-top:9px;font-size:12px;color:var(--ink-soft);display:flex;gap:12px;align-items:baseline}
+  .meta b{color:var(--ink);font-weight:700;font-size:13px}
+  .top{margin-top:auto;padding-top:7px;font-size:12px;color:var(--ink-soft);line-height:1.6}
+  .top em{font-style:normal;color:var(--red);font-weight:600}
+  .card.disabled{
+    opacity:.62;cursor:not-allowed;pointer-events:none;
+    background:repeating-linear-gradient(45deg,#fdfaf3,#fdfaf3 8px,#f7f0e0 8px,#f7f0e0 16px);
+  }
+  .card.disabled .top em{color:var(--ink-soft);font-weight:400}
+
+  .note{
+    margin-top:24px;background:var(--panel);border:1px dashed var(--gold);border-radius:12px;
+    padding:14px 16px;font-size:12.5px;color:var(--ink-soft);line-height:1.95;
+  }
+  .note b{color:var(--red)}
+  .note code{background:var(--gold-soft);border-radius:4px;padding:1px 5px;font-size:12px;color:var(--red-deep)}
+
+  .warn{
+    margin:14px 0 0;background:#fdf1ee;border:1px solid #e6b3a8;border-left:4px solid var(--red);
+    border-radius:10px;padding:12px 15px;font-size:13px;line-height:1.9;color:var(--red-deep);
+  }
+  .warn b{color:var(--red)}
+  .warn code{background:#fff;border-radius:4px;padding:1px 5px;font-size:12px;border:1px solid #e6b3a8}
+
+  /* ---------- 届别切换条（只有一届时自动隐藏） ---------- */
+  .year-bar{
+    display:none;align-items:center;gap:8px;flex-wrap:wrap;
+    padding:9px 18px;background:rgba(255,253,248,.9);
+    border-bottom:1px solid var(--line);
+  }
+  .year-bar.on{display:flex}
+  .year-bar .lbl{font-size:11.5px;color:var(--ink-soft);letter-spacing:.1em}
+  .year-bar a{
+    font-size:12.5px;padding:3px 12px;border-radius:999px;text-decoration:none;
+    border:1px solid var(--line);color:var(--ink-soft);
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .year-bar a:hover{border-color:var(--gold);color:var(--red);background:var(--gold-soft)}
+  .year-bar a[aria-current=page]{background:var(--red);border-color:var(--red);color:#f7ead2;font-weight:600}
+
+  footer{
+    text-align:center;font-size:11px;color:var(--gold-hi);letter-spacing:.06em;
+    padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom));
+    border-top:2px solid var(--gold-hi);background:linear-gradient(180deg,#8a1f14,#6e1409);
+  }
+
+  @media (max-width:900px){
+    header{gap:8px;padding:9px 12px}
+    .logo{width:40px;height:40px}
+    h1{font-size:16px;line-height:1.3;letter-spacing:0}
+    .stats{font-size:10.5px}
+    /* 音乐按钮留在标题同行右侧（不再独占一整行） */
+    .title-wrap{flex:1 1 0}
+    .header-actions{order:0;margin-left:auto;flex:0 0 auto}
+    .header-actions #bgm-btn{font-size:11px;padding:5px 8px;white-space:nowrap}
+    main{padding:16px 12px 40px}
+    .hero{min-height:146px;border-radius:14px;margin:0 0 16px;background-position:68% 30%}
+    /* 手机上标题会压在金色飘带上，改用纵向压暗保证可读 */
+    .hero::after{background:linear-gradient(180deg,rgba(110,18,10,.62) 0%,rgba(110,18,10,.34) 62%,rgba(110,18,10,.12) 100%)}
+    .hero-inner{padding:18px 20px}
+    .hero-title{letter-spacing:.1em}
+    .hero-sub{letter-spacing:.16em}
+    .board{grid-template-columns:1fr;gap:12px;padding:14px 15px;margin:0 0 12px}
+    .bstats{gap:0}
+    .bstat{padding:0 13px}
+    .bstat b{font-size:26px}
+    .bstat.city b{font-size:19px}
+    .tools{gap:10px;margin:0 0 12px}
+    .finder{flex:1 1 100%;max-width:none;margin-left:0;order:2}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:10px}
+    .card{padding:13px 13px 13px;border-radius:12px}
+    .no b{font-size:33px}
+    .sec-h small{display:none}
+  }
+
+  /* 360~400px 的窄屏：标题与音乐按钮争取留在同一行 */
+  @media (max-width:400px){
+    .logo{width:36px;height:36px}
+    h1{font-size:15px}
+    .stats{font-size:10px}
+    .header-actions #bgm-btn{font-size:10.5px;padding:5px 7px}
+  }
+  /* 窄屏：省掉校名前缀（横幅与页脚仍有完整校名），保证标题不断行 */
+  @media (max-width:420px){
+    h1 .school{display:none}
+  }
+
+  /* ========== 入 场 动 画：粒子聚合 → 白光爆闪 → 3D 校徽旋转（1906–2026） ========== */
+  #ycyz-loader{
+    --l-ease:cubic-bezier(.22,1,.36,1); --l-gold:#e8c97a; --l-gold-hi:#f2d992; --l-silk:#f7ead2;
+    position:fixed; inset:0; z-index:9999;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 50% 42%, #b03425 0%, #a9291c 46%, #6e130b 100%);
+    transition:transform .55s var(--l-ease), opacity .55s var(--l-ease);
+    will-change:transform, opacity;
+  }
+  #ycyz-loader.done{ transform:translateY(-102%); opacity:.98; pointer-events:none; }
+  #ycyz-loader .stage{ position:relative; width:min(78vmin,440px); aspect-ratio:1;
+    display:flex; align-items:center; justify-content:center;
+    perspective:1100px; perspective-origin:50% 45%; }
+
+  /* 粒子画布 → 聚合为校徽 */
+  #ycyz-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  /* 3D 实体校徽（Three.js 挤出建模，真实厚度 + 金属高光） */
+  #ycyz-three{ position:absolute; inset:0; width:100%; height:100%;
+    opacity:0; will-change:opacity; }
+  /* 聚合完成的白闪辉光 */
+  #ycyz-flash{ position:absolute; left:50%; top:50%; width:220%; height:220%;
+    transform:translate(-50%,-50%); pointer-events:none; opacity:0;
+    background:radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,252,240,.95) 12%,
+      rgba(255,244,214,.55) 26%, rgba(255,235,190,.22) 42%, rgba(255,235,190,0) 62%);
+    mix-blend-mode:screen; will-change:opacity, transform; }
+
+  /* 题字逐字浮现 */
+  #ycyz-loader .motto{ position:absolute; left:50%; bottom:-17%; transform:translateX(-50%);
+    white-space:nowrap; font-family:"KaiTi","STKaiti",serif; font-weight:700;
+    font-size:clamp(22px,5.4vmin,30px); color:var(--l-gold-hi);
+    text-shadow:0 0 18px rgba(232,201,122,.4); letter-spacing:.08em; }
+  #ycyz-loader .motto span{ display:inline-block; opacity:0; transform:translateY(.55em);
+    animation:ycyzCharUp .5s var(--l-ease) both; }
+  @keyframes ycyzCharUp{ to{ opacity:1; transform:translateY(0); } }
+  #ycyz-loader .years{ position:absolute; left:50%; bottom:-24.5%; transform:translateX(-50%);
+    font-size:clamp(12px,2.6vmin,15px); letter-spacing:.42em; text-indent:.42em;
+    color:var(--l-silk); opacity:0; animation:ycyzFadeUp .7s var(--l-ease) both; }
+  @keyframes ycyzFadeUp{
+    from{ opacity:0; transform:translateX(-50%) translateY(.6em); }
+    to{ opacity:.92; transform:translateX(-50%) translateY(0); } }
+
+  /* 进度条 */
+  #ycyz-loader .progress{ position:absolute; left:50%; bottom:7%; transform:translateX(-50%);
+    width:min(62vmin,240px); }
+  #ycyz-loader .progress .track{ height:4px; border-radius:99px; background:rgba(255,255,255,.16); overflow:hidden; }
+  #ycyz-loader .progress .fill{ height:100%; width:100%; border-radius:99px;
+    transform:scaleX(0); transform-origin:0 50%;
+    background:linear-gradient(90deg,#d4a94e,var(--l-gold-hi)); will-change:transform; }
+  #ycyz-loader .progress .pct{ margin-top:8px; text-align:center; font-size:11px; letter-spacing:.18em;
+    color:var(--l-silk); opacity:.72; font-variant-numeric:tabular-nums; }
+  #ycyz-skip{ position:absolute; right:20px; bottom:calc(20px + env(safe-area-inset-bottom));
+    font-size:12px; letter-spacing:.14em; color:var(--l-silk); opacity:.55;
+    border:1px solid rgba(247,234,210,.35); border-radius:99px; padding:6px 14px;
+    background:transparent; cursor:pointer; }
+  #ycyz-skip:hover{ opacity:.9; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ 入场动画：百廿荣光 · 养正唤醒（粒子聚合 → 3D 校徽 → 收幕） ═══════════ -->
+<div id="ycyz-loader" role="status" aria-label="载入中">
+  <div class="stage">
+    <canvas id="ycyz-canvas"></canvas>
+    <canvas id="ycyz-three" aria-label="银川一中百廿校庆校徽（1906–2026）"></canvas>
+    <div id="ycyz-flash"></div>
+    <div class="motto" aria-hidden="true">
+      <span style="animation-delay:3.90s">百</span><span style="animation-delay:3.98s">廿</span><span style="animation-delay:4.06s">荣</span><span style="animation-delay:4.14s">光</span><span style="animation-delay:4.22s">&nbsp;·&nbsp;</span><span style="animation-delay:4.30s">养</span><span style="animation-delay:4.38s">正</span><span style="animation-delay:4.46s">唤</span><span style="animation-delay:4.54s">醒</span>
+    </div>
+    <div class="years" style="animation-delay:4.65s">1906 — 2026</div>
+  </div>
+  <div class="progress">
+    <div class="track"><div class="fill" id="ycyz-fill"></div></div>
+    <div class="pct" id="ycyz-pct">0%</div>
+  </div>
+  <button class="skip" id="ycyz-skip">跳过</button>
+</div>
+<!-- ═══════════ 入场动画结束 ═══════════ -->
+
+<header>
+  <img class="logo" src="game/xiaoqing.png" alt="宁夏银川一中建校120周年纪念标">
+  <div class="title-wrap">
+    <h1><span class="school">宁夏银川一中 </span><span id="year-label">2026届</span><em>“蹭饭图”</em></h1>
+    <div class="stats" id="stats">正在统计各班去向……</div>
+  </div>
+  <nav class="header-actions">
+    <a class="home-chip" href="../" title="返回宁夏银川一中之家"><span aria-hidden="true">←</span><span class="hc-txt">一中之家</span></a>
+    <button id="bgm-btn" type="button">🎵 音乐</button>
+  </nav>
+</header>
+
+<nav class="year-bar" id="year-bar" aria-label="选择届别"></nav>
+
+<main>
+  <section class="hero" aria-label="宁夏银川一中建校120周年">
+    <div class="hero-inner">
+      <div class="hero-title">百廿荣光 · 养正唤醒</div>
+      <div class="hero-sub">宁夏银川一中建校120周年 · 1906 — 2026</div>
+      <span class="hero-tag" id="hero-tag">2026届毕业去向纪念</span>
+    </div>
+  </section>
+
+  <section class="board" id="board" aria-label="全校总览">
+    <div class="board-k">全校总览 · <span id="board-year">2026届</span></div>
+    <div class="bstats" id="bstats"></div>
+    <div class="cities" id="cities"></div>
+  </section>
+
+  <div class="tools">
+    <div class="sec-h">全部班级<small>高一入学时是一班人，毕业后散在各地 —— 去谁的城市，就找谁蹭饭</small></div>
+    <div class="finder">
+      <span class="icon" aria-hidden="true">◎</span>
+      <input id="finder-input" type="search" autocomplete="off" spellcheck="false"
+             placeholder="找同学：输入拼音首字母，如 LZJ" aria-label="按拼音首字母查找同学"
+             aria-controls="finder-results" aria-expanded="false">
+      <div class="results" id="finder-results" role="listbox" aria-label="查找结果"></div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="warn" id="warn" style="display:none"></div>
+
+  <!-- 维护说明（不对外显示）：
+       名单按届别分文件放在 data/2026.js、data/2027.js…，格式 ["首字母","大学·城市"]，大学可省略。
+       新增一届先改 data/years.js 登记，再建数据文件；两处都对上页面才会出现新的一卷。
+       修改后请务必在浏览器控制台 eval 一遍，语法合法 ≠ 运行不报错（常见为漏逗号）。
+       若所有班级都显示「暂未开放」，说明该届数据文件加载失败，可在控制台查看具体行号。 -->
+  <div class="note">
+    <b>关于这份地图</b>：各班页面按省份 / 城市分组展示每位同学的去向，点城市名可看该城的学校和同学。
+    <br><b>隐私说明</b>：所有人名一律以<strong>拼音首字母</strong>显示（如 LZJ），原始蹭饭图不对外展示，仅在班级内部留存。
+    <br>名单难免有错漏，如果发现请告诉班里负责整理的同学。
+  </div>
+</main>
+
+<footer>宁夏银川一中 · 建校120周年（1906—2026）· <span id="foot-year">2026届</span>毕业去向纪念页 · 仅供班级留念</footer>
+
+<script src="data/years.js"></script>
+<script src="assets/year-loader.js"></script>
+<script src="assets/tmap.js"></script>
+<script src="assets/bgm.js" defer></script>
+<script src="assets/festival.js" defer></script>
+<script>
+(function(){
+  var DATA = window.CLASS_DATA || {};
+  var TMAP = window.TMAP;
+  var grid = document.getElementById('grid');
+
+  /* ---------- 届别：标题、切换条、页脚都跟着所选届别走 ---------- */
+  (function(){
+    var Y = window.YCYEZ_YEAR;
+    if (!Y) return;
+    var set = function(id, text){
+      var el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+    set('year-label', Y.label);
+    set('hero-tag', Y.label + '毕业去向纪念');
+    set('board-year', Y.label);
+    set('foot-year', Y.label);
+    document.title = '蹭饭图总入口 · 宁夏银川一中' + Y.label + ' · 百廿校庆';
+
+    /* 只有一届时不显示切换条，避免一排点不动的按钮 */
+    var ALL = window.YCYEZ_YEARS || [];
+    var bar = document.getElementById('year-bar');
+    if (!bar || ALL.length < 2) return;
+    var esc = function(s){
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+      });
+    };
+    bar.classList.add('on');
+    bar.innerHTML = '<span class="lbl">届别</span>' + ALL.map(function(y){
+      var cur = String(y.id) === String(Y.id);
+      return '<a href="?year=' + encodeURIComponent(y.id) + '"' +
+             (cur ? ' aria-current="page"' : '') +
+             (y.note ? ' title="' + esc(y.note) + '"' : '') + '>' +
+             esc(y.label) + '</a>';
+    }).join('');
+  })();
+
+  /* ---------- 把各班名单聚合成「人数 / 城市数 / 最集中城市」 ---------- */
+  function cityLabelOf(region, stu, coord){
+    if (stu && stu[1] && stu[1].indexOf('·') >= 0) {
+      var c = stu[1].split('·').pop().trim();
+      if (TMAP && TMAP.hasCity(c)) return c;
+    }
+    if (coord && TMAP && TMAP.cityNameByCoord) {
+      var by = TMAP.cityNameByCoord(coord[0], coord[1]);
+      if (by) return by;
+    }
+    return String(region).split('/')[0].trim();
+  }
+
+  function agg(data){
+    var bucket = {}, total = 0;
+    data.regions.forEach(function(r){
+      r[1].forEach(function(stu){
+        total++;
+        var coord = TMAP ? (TMAP.geocode(stu[1]) || TMAP.geocode(r[0])) : null;
+        var key, label;
+        if (coord) {
+          key = coord[0].toFixed(2) + ',' + coord[1].toFixed(2);
+          label = cityLabelOf(r[0], stu, coord);
+        } else {
+          key = 'r:' + r[0];
+          label = String(r[0]).split('/')[0].trim();
+        }
+        if (!bucket[key]) bucket[key] = { city: label, count: 0 };
+        bucket[key].count++;
+        if (label) bucket[key].city = label;
+      });
+    });
+    var list = Object.keys(bucket).map(function(k){ return bucket[k]; })
+      .sort(function(a, b){ return b.count - a.count; });
+    return { total: total, list: list, cityCount: list.length };
+  }
+
+  var classes = [];
+  for (var i = 1; i <= 16; i++) {
+    var d = DATA[String(i)];
+    classes.push({ no: i, data: d, stat: d ? agg(d) : null });
+  }
+
+  /* ---------- 顶栏统计 ---------- */
+  var withData = classes.filter(function(c){ return c.data; });
+  var allTotal = 0, cityMap = {};
+  withData.forEach(function(c){
+    allTotal += c.stat.total;
+    c.stat.list.forEach(function(x){
+      cityMap[x.city] = (cityMap[x.city] || 0) + x.count;
+    });
+  });
+  var cityRank = Object.keys(cityMap).map(function(k){
+    return { city: k, count: cityMap[k] };
+  }).sort(function(a, b){ return b.count - a.count; });
+
+  if (!withData.length) {
+    document.getElementById('stats').textContent = '数据暂时没有加载出来 · 请刷新重试';
+    var w = document.getElementById('warn');
+    w.style.display = '';
+    w.innerHTML = '<b>没有读到任何班级数据</b><br>请刷新页面重试；如果一直这样，请联系负责维护的同学。';
+    if (window.console) console.error('[蹭饭图] window.CLASS_DATA 为空：data/years.js 或该届数据文件可能未加载 / 存在语法错误。');
+    document.getElementById('board').style.display = 'none';
+    document.querySelector('.finder').style.display = 'none';
+  } else {
+    document.getElementById('stats').textContent =
+      '已收录 ' + withData.length + ' 个班 · ' + allTotal + ' 位同学的去向';
+
+    /* ---------- 总览带 ---------- */
+    var top = cityRank[0] || { city: '—', count: 0 };
+    document.getElementById('bstats').innerHTML =
+      '<div class="bstat"><b>' + allTotal + '</b><span>位同学</span></div>' +
+      '<div class="bstat"><b>' + withData.length + '</b><span>个班</span></div>' +
+      '<div class="bstat"><b>' + cityRank.length + '</b><span>座城市</span></div>' +
+      '<div class="bstat city"><b>' + top.city + '</b><span>最集中 · ' + top.count + ' 人</span></div>';
+
+    var max = cityRank.length ? cityRank[0].count : 1;
+    var rows = cityRank.slice(0, 6).map(function(x){
+      return '<div class="bar-row"><span class="n">' + x.city + '</span>' +
+        '<span class="t"><i data-w="' + (x.count / max * 100).toFixed(1) + '"></i></span>' +
+        '<span class="v">' + x.count + '</span></div>';
+    }).join('');
+    var cities = document.getElementById('cities');
+    cities.innerHTML = '<div class="c-h">去向最多的城市</div>' + rows;
+    requestAnimationFrame(function(){
+      cities.querySelectorAll('.t i').forEach(function(el){
+        el.style.width = el.getAttribute('data-w') + '%';
+      });
+    });
+  }
+
+  /* ---------- 班级卡片 ---------- */
+  classes.forEach(function(c){
+    var a = document.createElement('a');
+    a.className = 'card' + (c.data ? '' : ' disabled');
+    if (c.data) a.href = 'class.html?cls=' + c.no +
+      (window.yearQuery && window.yearQuery() ? '&' + window.yearQuery() : '');
+    a.title = c.data ? ('进入高三(' + c.no + ')班蹭饭图')
+                     : ('高三(' + c.no + ')班蹭饭图暂未收录');
+
+    var body;
+    if (c.data) {
+      var t = c.stat.list[0] || { city: '—', count: 0 };
+      body = '<div class="meta"><span><b>' + c.stat.total + '</b> 人</span>' +
+             '<span><b>' + c.stat.cityCount + '</b> 城</span></div>' +
+             '<div class="top">最集中 <em>' + t.city + '</em> ' + t.count + ' 人</div>';
+    } else {
+      body = '<div class="meta"><span>暂未收录</span></div>' +
+             '<div class="top">本班蹭饭图还在整理中</div>';
+    }
+
+    a.innerHTML =
+      '<div class="corner"></div>' +
+      '<span class="arrow" aria-hidden="true">→</span>' +
+      '<div class="no">高三<b>' + c.no + '</b>班</div>' + body;
+
+    if (!c.data) a.addEventListener('click', function(e){ e.preventDefault(); });
+    grid.appendChild(a);
+  });
+
+  /* ---------- 找同学：首字母 → 班级 + 去向 ---------- */
+  (function(){
+    var input = document.getElementById('finder-input');
+    var box = document.getElementById('finder-results');
+    if (!input || !box) return;
+
+    var index = [];
+    classes.forEach(function(c){
+      if (!c.data) return;
+      c.data.regions.forEach(function(r){
+        r[1].forEach(function(stu){
+          if (!stu || !stu[0]) return;
+          index.push({ ini: String(stu[0]).toUpperCase(), cls: c.no, place: stu[1] || r[0] });
+        });
+      });
+    });
+
+    function render(q){
+      q = String(q || '').trim().toUpperCase();
+      if (!q) { box.classList.remove('on'); input.setAttribute('aria-expanded', 'false'); return; }
+
+      var hit = index.filter(function(s){ return s.ini.indexOf(q) === 0; });
+      if (!hit.length) hit = index.filter(function(s){ return s.ini.indexOf(q) >= 0; });
+
+      if (!hit.length) {
+        box.innerHTML = '<div class="tip">没找到「' + q.replace(/[<>&]/g, '') +
+          '」。只填首字母试试，比如 LZJ。</div>';
+      } else {
+        var shown = hit.slice(0, 8);
+        box.innerHTML = shown.map(function(s){
+          return '<a href="class.html?cls=' + s.cls + '&q=' + encodeURIComponent(s.ini) + '">' +
+            '<b>' + s.ini + '</b>' +
+            '<span class="cls">高三(' + s.cls + ')班</span>' +
+            '<span class="pl">' + s.place + '</span></a>';
+        }).join('') +
+        (hit.length > shown.length
+          ? '<div class="tip">还有 ' + (hit.length - shown.length) + ' 条结果，补充更多字母可缩小范围。</div>'
+          : '');
+      }
+      box.classList.add('on');
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    input.addEventListener('input', function(){ render(this.value); });
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') { this.value = ''; render(''); this.blur(); }
+      if (e.key === 'Enter') {
+        var first = box.querySelector('a');
+        if (first) { e.preventDefault(); location.href = first.getAttribute('href'); }
+      }
+    });
+    document.addEventListener('click', function(e){
+      if (!e.target.closest || !e.target.closest('.finder')) {
+        box.classList.remove('on');
+        input.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+})();
+</script>
+
+<script>
+(function(){
+  /* 入场动画：同一会话只播一次（刷新 / 从班级页返回都直接进内容）。
+     three.js 已本地化到 assets/，不再依赖 CDN。 */
+  var KEY = 'ycyz_intro_done';
+  var seen = false;
+  try { seen = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+  /* 维护用：加 ?nointro=1 可跳过入场动画直接看版式 */
+  if (location.search.indexOf('nointro') >= 0) seen = true;
+  var loader = document.getElementById('ycyz-loader');
+
+  if (seen) { if (loader) loader.remove(); return; }
+  try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+
+  /* 播放期间锁定滚动；幕布移除或超时后恢复（防止脚本异常把页面锁死） */
+  var de = document.documentElement, bd = document.body;
+  de.style.overflow = 'hidden'; bd.style.overflow = 'hidden';
+  var unlocked = false, mo = null;
+  function unlock(){
+    if (unlocked) return;
+    unlocked = true;
+    de.style.overflow = ''; bd.style.overflow = '';
+    if (mo) mo.disconnect();
+  }
+  mo = new MutationObserver(function(){ if (!document.getElementById('ycyz-loader')) unlock(); });
+  mo.observe(bd, {childList:true});
+  setTimeout(unlock, 8000);
+
+  function load(src, after){
+    var s = document.createElement('script');
+    s.src = src;
+    if (after) { s.onload = after; s.onerror = after; }
+    document.body.appendChild(s);
+  }
+  /* 先加载 three.js 再加载动画：有 3D 就走立体校徽；
+     加载失败时 loader-120.js 会自动退回「同一张校徽图的 2D 淡入」，不会卡住。 */
+  load('assets/three.min.js', function(){ load('assets/loader-120.js'); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# 统一换行：仓库里一律 LF，Windows 检出后不改动文件内容
+* text=auto eol=lf
+
+# 二进制资源不要做文本转换
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.mp3  binary
+*.ico  binary

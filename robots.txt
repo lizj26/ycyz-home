@@ -1,0 +1,8 @@
+# 宁夏银川一中之家 · robots
+#
+# 门户和资料站可以被搜到；毕业留念里全是学生去向，
+# 即使页面本身已经写了 noindex，这里再挡一道。
+User-agent: *
+Allow: /
+Disallow: /memory/
+Disallow: /forum/

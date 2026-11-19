@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#a9291c">
+<meta name="description" content="大学开源资料站：课程、文献、开源笔记、入学过渡与常用工具的入口目录。只给链接，不搬内容。">
+<title>大学开源资料站 · 宁夏银川一中之家</title>
+<link rel="icon" href="../assets/emblem.png">
+<link rel="stylesheet" href="../assets/portal.css">
+<link rel="stylesheet" href="../assets/subpage.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="../">
+    <img class="brand-mark" src="../assets/emblem.png" alt="" width="42" height="42">
+    <span class="brand-text">
+      <b>宁夏银川一中之家</b>
+      <i>Yinchuan No.1 Middle School</i>
+    </span>
+  </a>
+  <nav class="top-nav" aria-label="主导航">
+    <a href="../">首页</a>
+    <a href="../memory/">毕业留念</a>
+    <a href="../highschool/">高中资料</a>
+    <a href="./" aria-current="page">大学资料</a>
+    <a href="../forum/" data-forum>论坛</a>
+  </nav>
+</header>
+
+<section class="page-head">
+  <div class="page-head-inner">
+    <div class="crumb"><a href="../">首页</a><span>/</span>大学开源资料站</div>
+    <h1>大学开源资料站 <span class="chip chip-live">已上线</span></h1>
+    <p>
+      这里<b>只给入口，不搬内容</b>。公开课、文献库、开源笔记、入学要办的手续，按类别排好，
+      自己按需去拿。因为没人替你维护内容，所以只收那些经得起时间的站点。
+    </p>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <div class="notice">
+    <span class="notice-ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.6v.6"/></svg>
+    </span>
+    <p>
+      <b>「需校园网」的链接在校外打不开全文，这是正常的</b>，用学校的 VPN 或图书馆代理即可。
+      发现链接失效，直接告诉维护者，别自己忍着。
+    </p>
+  </div>
+
+  <div id="groups"></div>
+
+  <section class="howto">
+    <h2>想加一条？</h2>
+    <ol>
+      <li>打开 <code>university/data/links.js</code>，找到对应类别，复制一条改掉 <b>name / url / desc</b>。</li>
+      <li>只收<b>入口</b>，不收网盘和盗版电子书；能长期打开的官方站点优先。</li>
+      <li>加完自己点一遍，确认不是 404，再提交。</li>
+    </ol>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <img src="../assets/emblem.png" alt="" width="34" height="34">
+      <div>
+        <b>宁夏银川一中之家</b>
+        <span>1906 — 2026</span>
+      </div>
+    </div>
+    <div class="foot-links">
+      <a href="../memory/">毕业留念</a>
+      <a href="../highschool/">高中资料</a>
+      <a href="./">大学资料</a>
+      <a href="../forum/">论坛</a>
+    </div>
+    <p class="foot-note">
+      非官方站点，由一中学生与校友自发搭建和维护，不代表学校立场。
+      本站仅提供外部链接，不对第三方站点的内容负责。
+    </p>
+  </div>
+</footer>
+
+<script src="../assets/site.config.js"></script>
+<script src="data/links.js"></script>
+<script>
+(function(){
+  /* 论坛入口跟随配置 */
+  var cfg = window.YCYEZ || {};
+  if (cfg.forumUrl) {
+    document.querySelectorAll("[data-forum]").forEach(function(a){
+      a.href = cfg.forumUrl; a.target = "_blank"; a.rel = "noopener";
+    });
+  }
+
+  var DATA = window.YCYEZ_LINKS || [];
+  var box = document.getElementById("groups");
+  var n = 0;
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function host(u){
+    try { return new URL(u).hostname.replace(/^www\./, ""); }
+    catch (e) { return ""; }
+  }
+
+  if (!DATA.length) {
+    box.innerHTML =
+      '<div class="empty"><h2>还没有收录</h2>' +
+      '<p>清单文件是空的，先按下面「想加一条」的方法补几条再刷新。</p></div>';
+    return;
+  }
+
+  var html = "";
+  DATA.forEach(function(g){
+    var items = g.items || [];
+    if (!items.length) return;
+
+    html += '<section class="grp"><div class="grp-head">' +
+            '<h2>' + esc(g.group) + '</h2>' +
+            (g.note ? '<em>' + esc(g.note) + '</em>' : '') +
+            '</div><div class="links">';
+
+    items.forEach(function(it){
+      n += 1;
+      var tag = it.tag
+        ? '<span class="tag' + (it.tag === "免费" || it.tag === "开源" ? " t-free" : "") + '">' + esc(it.tag) + '</span>'
+        : "";
+      html += '<a class="link-row" href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer">' +
+                '<span class="link-no">' + (n < 10 ? "0" + n : n) + '</span>' +
+                '<span class="link-body">' +
+                  '<span class="link-name">' + esc(it.name) + tag + '</span>' +
+                  (it.desc ? '<span class="link-desc">' + esc(it.desc) + '</span>' : '') +
+                  '<span class="link-host">' + esc(host(it.url)) + '</span>' +
+                '</span>' +
+                '<span class="link-go" aria-hidden="true">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                  '<path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 14v5a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 19V7.5A1.5 1.5 0 0 1 5.5 6h5"/></svg>' +
+                '</span>' +
+              '</a>';
+    });
+
+    html += '</div></section>';
+  });
+
+  box.innerHTML = html;
+})();
+</script>
+</body>
+</html>

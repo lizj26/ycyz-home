@@ -1,0 +1,237 @@
+/* ============================================================
+ * 子页样式（高中资料 / 大学资料 / 论坛占位）
+ * 依赖 portal.css（先引入 portal.css，再引入本文件）
+ * ============================================================ */
+
+/* ---------------------------- 页头 ---------------------------- */
+.page-head{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(110% 80% at 84% 0%,rgba(232,201,122,.26) 0%,rgba(232,201,122,0) 60%),
+    linear-gradient(150deg,#a9291c,#8a1f14 60%,#7a1a10);
+  color:#f7ead2;
+  padding:clamp(30px,5vw,52px) clamp(14px,3vw,32px) clamp(28px,4.6vw,44px);
+  border-bottom:1px solid rgba(232,201,122,.34);
+}
+.page-head::before{
+  content:"";position:absolute;width:min(560px,110vw);height:min(560px,110vw);
+  right:-16%;top:-64%;border-radius:50%;
+  border:1px solid rgba(232,201,122,.16);
+}
+.page-head-inner{position:relative;z-index:1;max-width:1000px;margin:0 auto}
+
+.crumb{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;color:rgba(232,201,122,.78);margin-bottom:14px;
+}
+.crumb a{border-bottom:1px solid rgba(232,201,122,.3);padding-bottom:1px}
+.crumb a:hover{color:var(--gold-hi);border-color:var(--gold-hi)}
+.crumb span{opacity:.5}
+
+.page-head h1{
+  font-family:"KaiTi","STKaiti",serif;font-weight:700;
+  font-size:clamp(26px,4.4vw,38px);letter-spacing:.1em;line-height:1.25;
+  color:#fff6e3;text-shadow:0 2px 16px rgba(50,8,4,.4);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.page-head h1 .chip{font-size:11px;letter-spacing:.04em;transform:translateY(2px)}
+.page-head p{
+  margin-top:12px;font-size:clamp(13.5px,1.7vw,15px);
+  color:rgba(247,234,210,.86);max-width:42em;line-height:1.85;
+}
+.page-head p b{color:var(--gold-hi);font-weight:600}
+
+/* ---------------------------- 内容容器 ---------------------------- */
+.wrap{
+  width:100%;max-width:1000px;margin:0 auto;
+  padding:clamp(28px,4.6vw,50px) clamp(14px,3vw,32px) 0;
+}
+
+/* 小标题 */
+.grp{margin-bottom:clamp(26px,4vw,40px)}
+.grp-head{
+  display:flex;align-items:baseline;gap:10px;
+  margin-bottom:14px;padding-bottom:9px;
+  border-bottom:1px solid var(--line);
+}
+.grp-head h2{
+  font-family:"KaiTi","STKaiti",serif;font-weight:700;
+  font-size:clamp(17px,2.2vw,20px);letter-spacing:.09em;color:var(--red-deep);
+}
+.grp-head em{
+  font-style:normal;font-size:11.5px;color:var(--ink-faint);
+  margin-left:auto;letter-spacing:.02em;
+}
+
+/* ---------------------------- 链接列表 ---------------------------- */
+.links{display:flex;flex-direction:column;gap:2px}
+
+.link-row{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:11px 12px;border-radius:9px;
+  border:1px solid transparent;
+  transition:background .16s var(--ease),border-color .16s var(--ease),
+             transform .16s var(--ease);
+}
+.link-row:hover{
+  background:var(--paper);
+  border-color:var(--line);
+  transform:translateX(2px);
+}
+.link-row:hover .link-name{color:var(--red-deep)}
+
+.link-no{
+  flex:0 0 auto;width:22px;text-align:right;
+  font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;
+  padding-top:2px;
+}
+.link-body{min-width:0;flex:1 1 auto}
+.link-name{
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  font-size:14.5px;font-weight:600;color:var(--ink);
+  transition:color .16s var(--ease);
+}
+.link-name .tag{
+  font-size:10.5px;font-weight:600;letter-spacing:.02em;
+  padding:1px 7px;border-radius:4px;
+  background:var(--gold-soft);color:#8a6420;
+  border:1px solid rgba(201,151,63,.32);
+}
+.link-name .tag.t-free{background:rgba(169,41,28,.07);color:var(--red-deep);border-color:rgba(169,41,28,.18)}
+.link-desc{
+  display:block;
+  font-size:12.5px;color:var(--ink-soft);line-height:1.7;margin-top:2px;
+}
+.link-host{
+  display:block;
+  font-size:11px;color:var(--ink-faint);margin-top:3px;
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.link-go{
+  flex:0 0 auto;color:var(--ink-faint);margin-top:2px;
+  transition:transform .18s var(--ease),color .18s var(--ease);
+}
+.link-go svg{width:15px;height:15px;display:block}
+.link-row:hover .link-go{color:var(--red);transform:translate(3px,-3px)}
+
+/* ---------------------------- 空状态 ---------------------------- */
+.empty{
+  text-align:center;
+  border:1px dashed var(--line);
+  border-radius:14px;
+  background:rgba(255,253,248,.62);
+  padding:clamp(30px,5vw,48px) clamp(18px,3vw,30px);
+}
+.empty-ico{
+  width:52px;height:52px;margin:0 auto 14px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--gold-soft);border:1px solid rgba(201,151,63,.36);
+  color:var(--red-deep);
+}
+.empty-ico svg{width:24px;height:24px}
+.empty h2{
+  font-family:"KaiTi",serif;font-size:19px;letter-spacing:.08em;
+  color:var(--ink);margin-bottom:8px;
+}
+.empty p{font-size:13px;color:var(--ink-soft);line-height:1.85;max-width:32em;margin:0 auto}
+.empty p + p{margin-top:6px}
+
+/* 计划放进来的类别（灰色占位） */
+.slots{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;margin-top:22px;
+}
+.slot{
+  border:1px dashed var(--line);
+  border-radius:9px;padding:12px 10px;
+  background:rgba(250,244,232,.6);
+}
+.slot b{display:block;font-size:12.5px;color:var(--ink-soft);font-weight:600}
+.slot span{font-size:11px;color:var(--ink-faint)}
+
+/* ---------------------------- 提示框 ---------------------------- */
+.notice{
+  display:flex;gap:11px;
+  border:1px solid rgba(201,151,63,.4);
+  background:linear-gradient(180deg,#fdf7e9,#faf1dd);
+  border-radius:11px;
+  padding:14px 16px;margin-bottom:clamp(24px,3.6vw,34px);
+}
+.notice-ico{flex:0 0 auto;color:var(--gold);padding-top:1px}
+.notice-ico svg{width:17px;height:17px}
+.notice p{font-size:12.5px;color:#6f5525;line-height:1.8}
+.notice b{color:#5a4318}
+
+/* 版块目录（数量固定、不适合排卡片时用） */
+.board-list{
+  list-style:none;margin:0;padding:0;
+  border:1px solid var(--line);border-radius:12px;
+  background:var(--paper);overflow:hidden;
+}
+.board-list li{
+  display:flex;align-items:baseline;gap:14px;
+  padding:13px 18px;
+  border-top:1px solid var(--line-soft);
+}
+.board-list li:first-child{border-top:0}
+.board-list .n{
+  flex:0 0 20px;
+  font-family:"KaiTi",serif;font-size:12.5px;color:var(--gold);
+  font-variant-numeric:tabular-nums;
+}
+.board-list b{
+  flex:0 0 7.5em;font-size:13.5px;color:var(--ink);font-weight:600;
+}
+.board-list p{font-size:12.5px;color:var(--ink-soft);line-height:1.75;margin:0}
+
+@media (max-width:600px){
+  .board-list li{flex-wrap:wrap;gap:2px 10px;padding:12px 15px}
+  .board-list .n{flex-basis:16px}
+  .board-list b{flex:1 1 auto}
+  .board-list p{flex:1 1 100%;padding-left:26px}
+}
+
+/* ---------------------------- 投稿说明 ---------------------------- */
+.howto{
+  margin-top:clamp(30px,5vw,46px);
+  border:1px solid var(--line);border-radius:14px;
+  background:var(--paper);
+  padding:clamp(20px,3vw,28px);
+}
+.howto h2{
+  font-family:"KaiTi",serif;font-weight:700;font-size:19px;letter-spacing:.09em;
+  color:var(--red-deep);margin-bottom:14px;
+}
+.howto ol{margin:0;padding-left:20px}
+.howto li{font-size:13px;color:var(--ink-soft);line-height:1.9;margin-bottom:8px}
+.howto li b{color:var(--ink)}
+.howto code{
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:12px;background:var(--gold-soft);
+  padding:1px 6px;border-radius:4px;color:#7a5410;
+}
+
+/* 论坛占位：功能清单 */
+.feat{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));
+  gap:12px;margin-top:22px;
+}
+.feat-item{
+  border:1px solid var(--line);border-radius:10px;
+  background:var(--paper);padding:14px 16px;
+}
+.feat-item b{
+  display:flex;align-items:center;gap:7px;
+  font-size:13px;color:var(--ink);margin-bottom:4px;
+}
+.feat-item b::before{
+  content:"";width:5px;height:5px;border-radius:50%;background:var(--gold);
+}
+.feat-item span{font-size:12px;color:var(--ink-soft);line-height:1.7}
+
+@media (max-width:600px){
+  .link-no{display:none}
+  .link-row{padding:11px 6px;align-items:flex-start}
+  .link-go{padding-top:3px}
+}

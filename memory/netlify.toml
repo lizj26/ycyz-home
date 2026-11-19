@@ -1,0 +1,76 @@
+# Netlify 部署配置（纯静态站点：无后端、无构建、无 npm）
+#
+# 注意：本站现在默认随「宁夏银川一中之家」整体部署在 GitHub Pages 上，
+# 访问路径是 /memory/。这份配置只在**单独把 memory/ 当根目录部署**时才生效。
+#
+# 部署方式：把整个文件夹拖进 Netlify Drop 即可 —— 文件都在根目录，直接就是站点根。
+# 含真实姓名的原始蹭饭图、以及开发笔记，已经移到项目外的 we-all-know-archive/，
+# 所以即使整包上传，也不会带上未脱敏素材。
+#
+# 站点结构：
+#   /                     → index.html「蹭饭图」总入口，1—16 班平级入口
+#   /class.html?cls=N     → 高三(N)班蹭饭图（N = 1..16）
+#   /data/years.js        → 届别清单（有哪几届）
+#   /data/2026.js         → 当届班级去向数据（人名均为拼音首字母）
+#   /game/                → 小游戏「一中人会飞 / 2班人会飞」子页面
+#   /assets/              → tmap.js / uni-url.js / bgm.js / festival.js / loader-120.js / year-loader.js
+#   /robots.txt           → 禁止搜索引擎收录
+#
+# 根路径不需要任何跳转规则：入口页文件名本身就是 index.html。
+#
+# 说明：Netlify 自 2025 年起按积分计费（生产部署 15 积分/次，免费档 300 积分/月）。
+# 本站内容稳定、不频繁更新，手动拖拽上传不消耗构建积分。
+
+[build]
+  publish = "."
+  command = ""
+
+# 仅供班级留念：不参与搜索收录（页面里的 <meta name="robots"> 是第二道保险）
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# 静态资源缓存（文件名没有 hash，所以分开给）：
+#   · 图片 / 音频：体积大、几乎不变 → 一年 + immutable
+#   · JS / webp：还会改 → 1 小时，改完之后访客最多一小时拿到新版
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/game/*.mp3"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/game/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/game/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# 页面内容更新后要能让访客立刻看到新版，不做长缓存
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/class.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

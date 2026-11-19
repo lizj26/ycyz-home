@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#a9291c">
+<meta name="description" content="高中开源资料站：一中学生的笔记、真题、讲义与竞赛资料。目前尚在建设中。">
+<title>高中开源资料站 · 宁夏银川一中之家</title>
+<link rel="icon" href="../assets/emblem.png">
+<link rel="stylesheet" href="../assets/portal.css">
+<link rel="stylesheet" href="../assets/subpage.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="../">
+    <img class="brand-mark" src="../assets/emblem.png" alt="" width="42" height="42">
+    <span class="brand-text">
+      <b>宁夏银川一中之家</b>
+      <i>Yinchuan No.1 Middle School</i>
+    </span>
+  </a>
+  <nav class="top-nav" aria-label="主导航">
+    <a href="../">首页</a>
+    <a href="../memory/">毕业留念</a>
+    <a href="./" aria-current="page">高中资料</a>
+    <a href="../university/">大学资料</a>
+    <a href="../forum/" data-forum>论坛</a>
+  </nav>
+</header>
+
+<section class="page-head">
+  <div class="page-head-inner">
+    <div class="crumb"><a href="../">首页</a><span>/</span>高中开源资料站</div>
+    <h1>高中开源资料站 <span class="chip chip-soon">建设中</span></h1>
+    <p>
+      笔记、真题、讲义、错题本——<b>目前还是空的</b>。这一块不设截止日期，
+      有人整理第一份，它才算真正开始。
+    </p>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <div class="notice">
+    <span class="notice-ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.6v.6"/></svg>
+    </span>
+    <p>
+      页面框架已经搭好，缺的只是内容。结构留在这儿，谁想填都能填，
+      <b>不会因为没人管就烂掉</b>——它是静态页面，托管不花钱。
+    </p>
+  </div>
+
+  <div id="groups"></div>
+
+  <section class="howto">
+    <h2>打算放什么</h2>
+    <div class="feat">
+      <div class="feat-item">
+        <b>各科笔记</b>
+        <span>手写扫描或整理的电子版，按科目和年级分。</span>
+      </div>
+      <div class="feat-item">
+        <b>真题与模拟题</b>
+        <span>注明来源和年份，有答案的标一下答案是否齐全。</span>
+      </div>
+      <div class="feat-item">
+        <b>讲义与专题</b>
+        <span>老师发的专题、竞赛入门、自招强基的材料。</span>
+      </div>
+      <div class="feat-item">
+        <b>学法与避坑</b>
+        <span>怎么排时间、哪本书没用、高三哪些弯路可以绕开。</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="howto">
+    <h2>想放东西进来？</h2>
+    <ol>
+      <li>把资料传到 <b>GitHub 仓库</b>或公开网盘，拿到一个长期有效的链接。</li>
+      <li>打开 <code>highschool/data/links.js</code>，按文件开头的注释加一条，写明<b>名称、链接、说明、来源</b>。</li>
+      <li>如果不会改代码：论坛上线后在「技术与资源」版发帖，或者直接找维护者。</li>
+      <li><b>别传别人的教辅扫描件</b>。自己整理的、或作者明确允许转载的，才能放。</li>
+    </ol>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <img src="../assets/emblem.png" alt="" width="34" height="34">
+      <div>
+        <b>宁夏银川一中之家</b>
+        <span>1906 — 2026</span>
+      </div>
+    </div>
+    <div class="foot-links">
+      <a href="../memory/">毕业留念</a>
+      <a href="./">高中资料</a>
+      <a href="../university/">大学资料</a>
+      <a href="../forum/">论坛</a>
+    </div>
+    <p class="foot-note">
+      非官方站点，由一中学生与校友自发搭建和维护，不代表学校立场。
+      资料版权归原作者所有，如涉侵权请联系删除。
+    </p>
+  </div>
+</footer>
+
+<script src="../assets/site.config.js"></script>
+<script src="data/links.js"></script>
+<script>
+(function(){
+  var cfg = window.YCYEZ || {};
+  if (cfg.forumUrl) {
+    document.querySelectorAll("[data-forum]").forEach(function(a){
+      a.href = cfg.forumUrl; a.target = "_blank"; a.rel = "noopener";
+    });
+  }
+
+  var DATA = window.YCYEZ_LINKS || [];
+  var box = document.getElementById("groups");
+  var n = 0;
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function host(u){
+    try { return new URL(u).hostname.replace(/^www\./, ""); }
+    catch (e) { return ""; }
+  }
+
+  if (!DATA.length) {
+    box.innerHTML =
+      '<div class="empty">' +
+        '<div class="empty-ico" aria-hidden="true">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v14.5H6.5A2.5 2.5 0 0 0 4 20z"/><path d="M12 3v14.5"/><path d="M4 20a2.5 2.5 0 0 1 2.5-2.5H20"/></svg>' +
+        '</div>' +
+        '<h2>这里还空着</h2>' +
+        '<p>不是打不开，是真的还没有资料。</p>' +
+        '<p>第一批放什么、由谁来放，交给愿意动手的人决定。</p>' +
+      '</div>';
+    return;
+  }
+
+  var html = "";
+  DATA.forEach(function(g){
+    var items = g.items || [];
+    if (!items.length) return;
+
+    html += '<section class="grp"><div class="grp-head">' +
+            '<h2>' + esc(g.group) + '</h2>' +
+            (g.note ? '<em>' + esc(g.note) + '</em>' : '') +
+            '</div><div class="links">';
+
+    items.forEach(function(it){
+      n += 1;
+      var tag = it.tag
+        ? '<span class="tag' + (it.tag === "免费" || it.tag === "开源" ? " t-free" : "") + '">' + esc(it.tag) + '</span>'
+        : "";
+      html += '<a class="link-row" href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer">' +
+                '<span class="link-no">' + (n < 10 ? "0" + n : n) + '</span>' +
+                '<span class="link-body">' +
+                  '<span class="link-name">' + esc(it.name) + tag + '</span>' +
+                  (it.desc ? '<span class="link-desc">' + esc(it.desc) + '</span>' : '') +
+                  '<span class="link-host">' + esc(host(it.url)) + '</span>' +
+                '</span>' +
+                '<span class="link-go" aria-hidden="true">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                  '<path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 14v5a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 19V7.5A1.5 1.5 0 0 1 5.5 6h5"/></svg>' +
+                '</span>' +
+              '</a>';
+    });
+
+    html += '</div></section>';
+  });
+
+  box.innerHTML = html;
+})();
+</script>
+</body>
+</html>
